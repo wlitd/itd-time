@@ -1,0 +1,50 @@
+# ===== Wails =====
+# 构建产物（build 目录下的图标、清单等资源需要保留，仅忽略输出的二进制）
+build/bin
+# Wails 生成的前端依赖校验缓存
+frontend/package.json.md5
+
+# ===== Go =====
+# 根目录下手动 go build 产生的二进制
+*.exe
+*.exe~
+# 测试与性能分析产物
+*.test
+*.out
+coverage.txt
+# vendor 目录（如后续使用 go mod vendor 可按需删除此行）
+vendor/
+
+# ===== 前端（Vue / Vite / pnpm）=====
+node_modules
+frontend/dist
+# Vite 缓存与构建信息
+frontend/.vite/
+*.tsbuildinfo
+# ESLint 缓存
+.eslintcache
+# 日志
+*.log
+npm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ===== 环境变量 =====
+# 基础 .env（如 frontend/.env）为非敏感配置需要提交，仅忽略本地覆盖文件
+.env.local
+.env.*.local
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+.qoder/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+Desktop.ini

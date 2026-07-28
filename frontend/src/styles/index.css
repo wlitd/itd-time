@@ -1,0 +1,45 @@
+html {
+  body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    #app {
+      height: 100%;
+    }
+  }
+}
+
+@font-face {
+  font-family: 'LED';
+  src: url('../assets/font/LED.ttf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 主题切换过渡效果 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root),
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root),
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+/* 去除标题的默认边距 */
+.n-h {
+  margin: 0 !important;
+}
+
+/* 设置 dropdown 嵌套菜单的圆角 */
+.n-dropdown-menu {
+  border-radius: 12px !important;
+}

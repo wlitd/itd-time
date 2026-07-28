@@ -1,0 +1,54 @@
+minimumReleaseAgeExclude:
+  - vite@8.1.5
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - semver
+
+catalogs:
+  build:
+    vite: ^8.1.5
+
+  css:
+    unocss: ^66.7.5
+
+  frontend:
+    '@vue/devtools-api': ^8.2.1
+    pinia: ^4.0.2
+    pinia-plugin-persistedstate: ^4.7.1
+    vue: ^3.5.40
+    vue-i18n: ^11.4.8
+    vue-router: ^5.2.0
+
+  icons:
+    '@iconify-json/flag': ^1.2.12
+    '@iconify-json/lucide': ^1.2.120
+
+  lint:
+    '@antfu/eslint-config': ^9.2.0
+    eslint: ^10.8.0
+
+  plugins:
+    '@intlify/unplugin-vue-i18n': ^11.2.4
+    '@vitejs/plugin-vue': ^6.0.8
+    '@vitejs/plugin-vue-jsx': ^5.1.6
+    unplugin-auto-import: ^21.0.0
+    unplugin-vue-components: ^32.1.0
+
+  types:
+    '@types/node': ^26.1.1
+    '@vue/tsconfig': ^0.9.1
+    typescript: 6.0.3
+
+  ui:
+    naive-ui: ^2.44.1
+
+  utils:
+    '@ctrl/tinycolor': ^4.2.0
+    '@vueuse/core': ^14.3.0
+    dayjs: ^1.11.21
+
+allowBuilds:
+  esbuild: true

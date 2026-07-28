@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "itd-time",
+  "outputfilename": "itd-time",
+  "frontend:install": "pnpm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Wlitd",
+    "email": "2583651948@qq.com"
+  }
+}

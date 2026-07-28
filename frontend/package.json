@@ -1,0 +1,40 @@
+{
+  "name": "ItdTime",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ctrl/tinycolor": "catalog:utils",
+    "@vueuse/core": "catalog:utils",
+    "dayjs": "catalog:utils",
+    "naive-ui": "catalog:ui",
+    "pinia": "catalog:frontend",
+    "pinia-plugin-persistedstate": "catalog:frontend",
+    "vue": "catalog:frontend",
+    "vue-i18n": "catalog:frontend",
+    "vue-router": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@iconify-json/flag": "catalog:icons",
+    "@iconify-json/lucide": "catalog:icons",
+    "@intlify/unplugin-vue-i18n": "catalog:plugins",
+    "@types/node": "catalog:types",
+    "@vitejs/plugin-vue": "catalog:plugins",
+    "@vitejs/plugin-vue-jsx": "catalog:plugins",
+    "@vue/devtools-api": "catalog:frontend",
+    "@vue/tsconfig": "catalog:types",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types",
+    "unocss": "catalog:css",
+    "unplugin-auto-import": "catalog:plugins",
+    "unplugin-vue-components": "catalog:plugins",
+    "vite": "catalog:build"
+  }
+}
