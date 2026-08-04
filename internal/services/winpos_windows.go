@@ -1,6 +1,6 @@
 //go:build windows
 
-package main
+package services
 
 import (
 	"syscall"
@@ -30,9 +30,9 @@ const (
 // hwndTopmost 置顶窗口层级（HWND_TOPMOST = -1）
 var hwndTopmost = ^uintptr(0)
 
-// moveWindowToBottomRight 将指定标题的窗口移动到主屏幕工作区（不含任务栏）右下角
+// MoveWindowToBottomRight 将指定标题的窗口移动到主屏幕工作区（不含任务栏）右下角
 // margin 为距离屏幕边缘的间距（物理像素）
-func moveWindowToBottomRight(title string, margin int32) {
+func MoveWindowToBottomRight(title string, margin int32) {
 	ptr, err := syscall.UTF16PtrFromString(title)
 	if err != nil {
 		return

@@ -4,102 +4,134 @@ import (
 	"context"
 	_ "embed"
 	"os"
-	"strings"
-	"sync"
 
-	"fyne.io/systray"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"itd-time/internal/services"
 )
 
 //go:embed icon.ico
 var iconBytes []byte
 
 // remindWindowTitle 提醒弹窗窗口标题，用于定位窗口句柄
-const remindWindowTitle = "itd-time-remind"
+const remindWindowTitle = "ItdTime-remind"
 
-// App struct
+// App 应用主结构体，聚合各服务模块，并作为 Wails 前端绑定的入口
 type App struct {
-	ctx       context.Context
-	isQuiting bool
+	ctx context.Context
 
-	// 提醒弹窗进程相关（通过命令行参数 --remind 启动）
-	isRemind    bool
-	remindStyle string
-	remindMode  string
-
-	// 提醒配置（由前端同步，主进程的定时器据此判断提醒时机）
-	remindMu  sync.Mutex
-	remindCfg remindConfig
+	tray      *services.TrayService
+	remind    *services.RemindService
+	autoStart *services.AutoStartService
+	updater   *services.UpdaterService
 }
 
-// NewApp creates a new App application struct
+// NewApp 创建应用实例，初始化各服务模块
 func NewApp() *App {
-	a := &App{}
+	remindSvc := services.NewRemindService()
+	remindSvc.ParseArgs(os.Args[1:])
 
-	// 解析命令行参数，判断是否为提醒弹窗进程
-	for _, arg := range os.Args[1:] {
-		switch {
-		case arg == "--remind":
-			a.isRemind = true
-		case strings.HasPrefix(arg, "--style="):
-			a.remindStyle = strings.TrimPrefix(arg, "--style=")
-		case strings.HasPrefix(arg, "--mode="):
-			a.remindMode = strings.TrimPrefix(arg, "--mode=")
-		}
+	return &App{
+		tray:      services.NewTrayService(iconBytes),
+		remind:    remindSvc,
+		autoStart: services.NewAutoStartService(),
+		updater:   services.NewUpdaterService(),
 	}
-
-	return a
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
+// startup Wails 启动回调，初始化上下文并分发到各服务
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	a.updater.Startup(ctx)
+	a.remind.Start(ctx)
 
-	if a.isRemind {
+	if a.remind.IsRemind() {
 		// 提醒弹窗：移动到屏幕工作区右下角，等待前端渲染完成后再显示
-		go moveWindowToBottomRight(remindWindowTitle, 12)
+		go services.MoveWindowToBottomRight(remindWindowTitle, 12)
 		return
 	}
 
-	go systray.Run(a.onTrayReady, a.onTrayExit)
-	go a.runRemindTicker()
+	// 主进程：启动系统托盘（定时器由 remind.Start 内部启动）
+	go a.tray.Run(ctx)
 }
 
-// onTrayReady is called when the systray is ready
-func (a *App) onTrayReady() {
-	systray.SetIcon(iconBytes)
-	systray.SetTitle("itdTime")
-	systray.SetTooltip("wlitd 正在盯着时钟 ⏰")
-
-	mShow := systray.AddMenuItem("显示窗口", "显示主窗口")
-	systray.AddSeparator()
-	mQuit := systray.AddMenuItem("退出应用", "彻底退出程序")
-
-	go func() {
-		for {
-			select {
-			case <-mShow.ClickedCh:
-				runtime.WindowShow(a.ctx)
-			case <-mQuit.ClickedCh:
-				a.isQuiting = true
-				systray.Quit()
-				runtime.Quit(a.ctx)
-			}
-		}
-	}()
-}
-
-func (a *App) onTrayExit() {}
-
+// OnBeforeClose 窗口关闭前回调
 func (a *App) OnBeforeClose(ctx context.Context) (prevent bool) {
 	// 提醒弹窗进程直接允许退出
-	if a.isRemind {
+	if a.remind.IsRemind() {
 		return false
 	}
-	if !a.isQuiting {
+	if !a.tray.IsQuiting() {
 		runtime.WindowHide(ctx)
 		return true
 	}
 	return false
+}
+
+// ======================= Wails 前端绑定方法 =======================
+
+// --- 提醒相关 ---
+
+// ShowRemind 启动提醒弹窗子进程
+func (a *App) ShowRemind(style string, mode string) {
+	a.remind.ShowRemind(style, mode)
+}
+
+// SyncRemindConfig 同步提醒配置
+func (a *App) SyncRemindConfig(offTime string, advanceMinutes int, repeatDays []int, style string) {
+	a.remind.SyncConfig(offTime, advanceMinutes, repeatDays, style)
+}
+
+// IsRemindWindow 当前进程是否为提醒弹窗进程
+func (a *App) IsRemindWindow() bool {
+	return a.remind.IsRemind()
+}
+
+// GetRemindStyle 获取提醒弹窗样式
+func (a *App) GetRemindStyle() string {
+	return a.remind.Style()
+}
+
+// GetRemindMode 获取提醒弹窗模式
+func (a *App) GetRemindMode() string {
+	return a.remind.Mode()
+}
+
+// CloseRemind 关闭提醒弹窗
+func (a *App) CloseRemind() {
+	a.remind.CloseRemind()
+}
+
+// --- 自启动相关 ---
+
+// EnableAutoStart 开启开机自启动
+func (a *App) EnableAutoStart() error {
+	return a.autoStart.EnableAutoStart()
+}
+
+// DisableAutoStart 关闭开机自启动
+func (a *App) DisableAutoStart() error {
+	return a.autoStart.DisableAutoStart()
+}
+
+// IsAutoStartEnabled 检查自启动状态
+func (a *App) IsAutoStartEnabled() bool {
+	return a.autoStart.IsAutoStartEnabled()
+}
+
+// --- 更新相关 ---
+
+// GetVersion 获取当前应用版本号
+func (a *App) GetVersion() string {
+	return services.Version
+}
+
+// CheckForUpdate 检查更新
+func (a *App) CheckForUpdate() services.UpdateResult {
+	return a.updater.CheckForUpdate()
+}
+
+// DownloadAndInstall 下载并安装更新
+func (a *App) DownloadAndInstall(url string) error {
+	return a.updater.DownloadAndInstall(url)
 }

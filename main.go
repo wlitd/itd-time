@@ -13,11 +13,11 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	app := NewApp()
 
+	// 主窗口默认配置
 	appOptions := &options.App{
-		Title:  "itd-time",
+		Title:  "ItdTime",
 		Width:  348,
 		Height: 512,
 		AssetServer: &assetserver.Options{
@@ -34,8 +34,8 @@ func main() {
 		},
 	}
 
-	// 提醒弹窗进程：右下角置顶小窗，隐藏启动，由前端渲染完成后再显示
-	if app.isRemind {
+	// 提醒弹窗进程：覆盖为右下角置顶小窗配置
+	if app.remind.IsRemind() {
 		appOptions.Title = remindWindowTitle
 		appOptions.Width = 400
 		appOptions.Height = 84
@@ -50,9 +50,7 @@ func main() {
 		}
 	}
 
-	// Create application with options
 	err := wails.Run(appOptions)
-
 	if err != nil {
 		println("Error:", err.Error())
 	}
