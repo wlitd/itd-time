@@ -2,7 +2,7 @@ import antfu from '@antfu/eslint-config'
 
 export default antfu(
   {
-    ignores: ['node_modules', 'dist', 'public'],
+    ignores: ['node_modules', 'dist', 'public', 'wailsjs'],
 
     // 覆盖antfu的规则
     rules: {
