@@ -1,6 +1,6 @@
-# itd-time 前端
+# ItdTime 前端
 
-itd-time 桌面应用的前端部分，基于 **Vue 3 + Vite 8 + TypeScript** 构建，由 Wails 加载运行。项目整体介绍、桌面端架构与构建发布请参阅[根目录 README](../README.md)。
+ItdTime 桌面应用的前端部分，基于 **Vue 3 + Vite 8 + TypeScript** 构建，由 Wails 加载运行。项目整体介绍、桌面端架构与构建发布请参阅[根目录 README](../README.md)。
 
 ## 📦 常用命令
 

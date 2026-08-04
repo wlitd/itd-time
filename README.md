@@ -1,4 +1,4 @@
-# itd-time ⏰
+# ItdTime ⏰
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Wails](https://img.shields.io/badge/Wails-v2-DF0000?logo=wails&logoColor=white)](https://wails.io/)
@@ -10,7 +10,7 @@
 >
 > 到点就要准时挂钟离岗 ⏰
 
-`itd-time` 是一款基于 **Wails + Go + Vue 3** 的轻量桌面应用，核心功能是下班倒计时与到点提醒：设定下班时间后，应用会在屏幕右下角弹出置顶提醒弹窗，提醒你准时跑路；同时还提供一个待办提醒列表，管理零散的计划事项。
+`ItdTime` 是一款基于 **Wails + Go + Vue 3** 的轻量桌面应用，核心功能是下班倒计时与到点提醒：设定下班时间后，应用会在屏幕右下角弹出置顶提醒弹窗，提醒你准时跑路；同时还提供一个待办提醒列表，管理零散的计划事项。
 
 ## ✨ 功能特性
 
