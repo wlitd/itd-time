@@ -7,6 +7,7 @@ import {
   DisableAutoStart,
   DownloadAndInstall,
   EnableAutoStart,
+  ExitApp,
   GetVersion,
   IsAutoStartEnabled
 } from '@/../wailsjs/go/main/App'
@@ -131,7 +132,8 @@ async function startDownload(url: string): Promise<void> {
 
   try {
     await DownloadAndInstall(url)
-    // 成功后会退出应用，不会走到这里
+    // 安装包已启动，彻底退出进程（托盘 + 主进程全部终止，释放 exe 供安装包覆盖）
+    ExitApp()
   } catch {
     message.error(t('updateFailed'))
   } finally {

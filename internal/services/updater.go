@@ -136,9 +136,6 @@ func (s *UpdaterService) runInstaller(filePath string) error {
 		return fmt.Errorf("启动安装程序失败: %v", err)
 	}
 
-	// 退出应用
-	wailsRuntime.Quit(s.ctx)
-
 	return nil
 }
 

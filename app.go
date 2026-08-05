@@ -135,3 +135,8 @@ func (a *App) CheckForUpdate() services.UpdateResult {
 func (a *App) DownloadAndInstall(url string) error {
 	return a.updater.DownloadAndInstall(url)
 }
+
+// ExitApp 彻底退出应用进程（安装更新前使用，避免托盘残留阻止 exe 覆盖）
+func (a *App) ExitApp() {
+	os.Exit(0)
+}
