@@ -95,7 +95,6 @@ func (s *UpdaterService) DownloadAndInstall(url string) error {
 	if err != nil {
 		return fmt.Errorf("创建文件失败: %v", err)
 	}
-	defer out.Close()
 
 	// 4. 带进度的拷贝
 	// 获取文件总大小用于计算进度
@@ -108,7 +107,13 @@ func (s *UpdaterService) DownloadAndInstall(url string) error {
 
 	// 执行拷贝
 	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
+		out.Close()
 		return fmt.Errorf("文件写入失败: %v", err)
+	}
+
+	// 关闭文件
+	if err := out.Close(); err != nil {
+		return fmt.Errorf("关闭文件失败: %v", err)
 	}
 
 	// 5. 运行安装包
@@ -122,7 +127,7 @@ func (s *UpdaterService) runInstaller(filePath string) error {
 	switch runtime.GOOS {
 	case "windows":
 		// Windows: 直接启动安装包
-		cmd = exec.Command(filePath)
+		cmd = exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", fmt.Sprintf("Start-Process -FilePath '%s' -Verb RunAs", filePath))
 	case "darwin":
 		// Mac: 打开 dmg 镜像，用户手动拖拽
 		cmd = exec.Command("open", filePath)
