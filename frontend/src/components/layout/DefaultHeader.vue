@@ -5,11 +5,12 @@ import { useI18n } from 'vue-i18n'
 import {
   CheckForUpdate,
   DisableAutoStart,
+  DownloadAndInstall,
   EnableAutoStart,
   GetVersion,
   IsAutoStartEnabled
 } from '@/../wailsjs/go/main/App'
-import { Quit } from '@/../wailsjs/runtime/runtime'
+import { EventsOn, Quit } from '@/../wailsjs/runtime/runtime'
 
 const { t } = useI18n()
 const themeVars = useThemeVars()
@@ -27,6 +28,10 @@ const autoCheckUpdate = useStorage<boolean>('autoCheckUpdate', false)
 const currentVersion = ref<string>('')
 /** 是否正在检查更新 */
 const checking = ref<boolean>(false)
+/** 下载进度百分比 */
+const downloadPercent = ref<number>(0)
+/** 是否正在下载 */
+const downloading = ref<boolean>(false)
 
 // ==================== 初始化 ====================
 
@@ -101,13 +106,8 @@ async function doCheckUpdate(silent = false): Promise<void> {
         ),
         positiveText: t('download'),
         negativeText: t('cancel'),
-        onPositiveClick: async () => {
-          try {
-            const { DownloadAndInstall } = await import('@/../wailsjs/go/main/App')
-            await DownloadAndInstall(info.downloadUrl)
-          } catch {
-            message.error(t('updateFailed'))
-          }
+        onPositiveClick: () => {
+          startDownload(info.downloadUrl)
         }
       })
     } else if (!silent) {
@@ -118,6 +118,26 @@ async function doCheckUpdate(silent = false): Promise<void> {
       message.error(t('updateFailed'))
   } finally {
     checking.value = false
+  }
+}
+
+/** 启动下载（监听进度事件并展示进度弹窗） */
+async function startDownload(url: string): Promise<void> {
+  downloading.value = true
+  downloadPercent.value = 0
+
+  const cancel = EventsOn('update-download-progress', (percent: number) => {
+    downloadPercent.value = percent
+  })
+
+  try {
+    await DownloadAndInstall(url)
+    // 成功后会退出应用，不会走到这里
+  } catch {
+    message.error(t('updateFailed'))
+  } finally {
+    cancel()
+    downloading.value = false
   }
 }
 
@@ -178,7 +198,7 @@ const opts = computed<DropdownOption[]>(() => ([
         <div class="rounded h-34px flex items-center cursor-pointer px-2 justify-between gap-2 hover:bg-[var(--itd-hover)]">
           <div>{t('version')}</div>
           <NTag bordered={false} size="small" round type="info">
-            { `V${currentVersion.value}` || 'dev' }
+            {`V${currentVersion.value}` || 'dev'}
           </NTag>
         </div>
       </div>
@@ -295,15 +315,12 @@ onMounted(() => {
         </NH2>
 
         <NDropdown
-          trigger="click"
-          placement="bottom-end"
-          :style="{
+          trigger="click" placement="bottom-end" :style="{
             'width': '180px',
             '--itd-hover': themeVars.hoverColor,
             'color': themeVars.textColor2,
             'border-radius': '12px',
-          }"
-          :options="opts"
+          }" :options="opts"
         >
           <NButton v-ripple circle type="primary">
             <template #icon>
@@ -316,6 +333,46 @@ onMounted(() => {
       <CountdownCard />
     </div>
   </div>
+
+  <!-- 下载进度弹窗 -->
+  <NModal :show="downloading" :mask-closable="false" :auto-focus="false" transform-origin="center">
+    <div
+      class="w-280px rounded-xl px-5 py-6 flex flex-col items-center gap-4" :style="{
+        backgroundColor: themeVars.cardColor,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.24)',
+        border: `1px solid ${themeVars.dividerColor}`,
+      }"
+    >
+      <!-- 图标 + 标题 -->
+      <div class="flex flex-col items-center gap-2">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center"
+          :style="{ backgroundColor: `${themeVars.primaryColor}18` }"
+        >
+          <div class="i-lucide:download text-2xl" :style="{ color: themeVars.primaryColor }" />
+        </div>
+        <NText strong :style="{ fontSize: '15px' }">
+          {{ t('downloading') }}
+        </NText>
+      </div>
+
+      <!-- 进度条 -->
+      <div class="w-full flex flex-col gap-2">
+        <NProgress
+          type="line" :percentage="downloadPercent" :height="6" :border-radius="3" :show-indicator="false"
+          processing
+        />
+        <NText depth="3" :style="{ fontSize: '13px', textAlign: 'center', width: '100%' }">
+          {{ t('downloadingDesc', { percent: downloadPercent }) }}
+        </NText>
+      </div>
+
+      <!-- 提示 -->
+      <NText depth="3" :style="{ fontSize: '11px' }">
+        {{ t('downloadTip') }}
+      </NText>
+    </div>
+  </NModal>
 </template>
 
 <i18n lang="json">
@@ -339,7 +396,10 @@ onMounted(() => {
     "updateFailed": "检查更新失败！",
     "newVersionFound": "发现新版本 {version}，是否下载？",
     "download": "下载",
-    "cancel": "取消"
+    "cancel": "取消",
+    "downloading": "更新下载中…",
+    "downloadingDesc": "正在下载更新 {percent}%…",
+    "downloadTip": "下载完成后将自动安装，请稍候"
   },
   "en": {
     "off": "I'm free!",
@@ -360,7 +420,10 @@ onMounted(() => {
     "updateFailed": "Update check failed!",
     "newVersionFound": "New version {version} found. Download?",
     "download": "Download",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "downloading": "Downloading Update…",
+    "downloadingDesc": "Downloading update {percent}%…",
+    "downloadTip": "Will install automatically after download, please wait"
   }
 }
 </i18n>
