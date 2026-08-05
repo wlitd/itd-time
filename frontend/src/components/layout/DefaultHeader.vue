@@ -66,7 +66,6 @@ async function toggleSelfStart(val: boolean): Promise<void> {
       await DisableAutoStart()
     }
     selfStartEnabled.value = val
-    message.success(val ? t('selfStartEnabled') : t('selfStartDisabled'))
   } catch {
     message.error(t('selfStartFailed'))
   }
@@ -388,8 +387,6 @@ onMounted(() => {
     "version": "当前版本",
     "close": "关闭",
     "isWeb": "浏览器环境不支持检查更新！",
-    "selfStartEnabled": "已开启开机自启！",
-    "selfStartDisabled": "已关闭开机自启！",
     "selfStartFailed": "自启动设置失败！",
     "updateAvailable": "发现新版本！",
     "upToDate": "已是最新版本！",
@@ -412,8 +409,6 @@ onMounted(() => {
     "version": "Version",
     "close": "Close",
     "isWeb": "Browser environment does not support checking for updates!",
-    "selfStartEnabled": "Auto start enabled!",
-    "selfStartDisabled": "Auto start disabled!",
     "selfStartFailed": "Auto start setting failed!",
     "updateAvailable": "Update Available!",
     "upToDate": "Up to date!",
