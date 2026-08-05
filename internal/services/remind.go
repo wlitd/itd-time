@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -123,12 +124,8 @@ func (s *RemindService) checkRemind(prev, now time.Time) {
 		weekday = 7
 	}
 	repeat := false
-	for _, d := range cfg.RepeatDays {
-		if d == weekday {
-			repeat = true
-			break
-		}
-	}
+
+	repeat = slices.Contains(cfg.RepeatDays, weekday)
 	if !repeat {
 		return
 	}
