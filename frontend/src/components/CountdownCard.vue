@@ -11,18 +11,20 @@ const { offTime, advanceMinutes } = storeToRefs(useOffWorkStore())
 
 const now = useNow({ interval: 1000 })
 
-const countdown = computed<string>(() => {
+/** 距离下班剩余毫秒数（≤0 表示已过） */
+const remainingMs = computed<number>(() => {
   if (!offTime.value)
-    return '00:00:00'
-
+    return 0
   const target = dayjs(`${dayjs().format('YYYY-MM-DD')}${offTime.value}`)
-
-  const diff = target.diff(now.value)
-  if (diff <= 0)
-    return '00:00:00'
-
-  return dayjs.duration(diff).format('HH:mm:ss')
+  return target.diff(now.value)
 })
+
+const countdown = computed<string>(() => {
+  const diff = remainingMs.value
+  return diff > 0 ? dayjs.duration(diff).format('HH:mm:ss') : '00:00:00'
+})
+
+const isOver = computed<boolean>(() => remainingMs.value <= 0)
 
 const notifyTime = computed<string>(() => {
   if (!offTime.value)
@@ -48,7 +50,17 @@ const { showRemind } = useOffWorkRemind()
     <div class="flex flex-col gap-1">
       <NText depth="3" class="text-xs pl-2">{{ t('freedomCountdown') }}</NText>
       <div class="flex justify-between items-center gap-2">
-        <div class="flex-1 led text-5xl tracking-wider text-center font-medium">{{ countdown }}</div>
+        <!-- 倒计时中：LED 数字 -->
+        <div v-if="!isOver" class="flex-1 led text-5xl tracking-wider text-center font-medium">
+          {{ countdown }}
+        </div>
+        <!-- 已下班：风趣文案 -->
+        <div v-else class="flex-1 flex items-center justify-center gap-1.5 py-1">
+          <span class="text-2xl leading-none">🎉</span>
+          <NText type="primary" strong class="text-xl tracking-wider">
+            {{ t('freed') }}
+          </NText>
+        </div>
         <div class="flex flex-col gap-1 items-end">
           <NText depth="3" class="text-xs">{{ t('leave', { offTime }) }}</NText>
           <NText depth="3" class="text-xs">{{ t('remind', { notifyTime }) }}</NText>
@@ -110,7 +122,8 @@ const { showRemind } = useOffWorkRemind()
     "setting": "设置",
     "advanceMinutes": "提前提醒",
     "repeat": "重复",
-    "previewRemind": "预览提醒"
+    "previewRemind": "预览提醒",
+    "freed": "下班！"
   },
   "en": {
     "freedomCountdown": "Freedom Countdown",
@@ -119,7 +132,8 @@ const { showRemind } = useOffWorkRemind()
     "setting": "Setting",
     "advanceMinutes": "Advance Minutes",
     "repeat": "Repeat",
-    "previewRemind": "Preview Remind"
+    "previewRemind": "Preview Remind",
+    "freed": "Off Duty!"
   }
 }
 </i18n>
