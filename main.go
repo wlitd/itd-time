@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"os"
+	"slices"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -50,8 +52,18 @@ func main() {
 		}
 	}
 
+	// 自启动（后台启动到托盘）：窗口隐藏，仅显示系统托盘图标
+	if hasAutostartFlag() {
+		appOptions.StartHidden = true
+	}
+
 	err := wails.Run(appOptions)
 	if err != nil {
 		println("Error:", err.Error())
 	}
+}
+
+// hasAutostartFlag 检测命令行是否包含 --autostart 参数
+func hasAutostartFlag() bool {
+	return slices.Contains(os.Args[1:], "--autostart")
 }

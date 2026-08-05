@@ -67,9 +67,9 @@ func (a *AutoStartService) IsAutoStartEnabled() bool {
 
 func (a *AutoStartService) enableAutoStartWindows() error {
 	exePath, _ := os.Executable()
-	// 使用 reg add 命令添加注册表项
+	// 注册表值追加 --autostart 参数，启动时检测该标志以隐藏窗口（后台启动到托盘）
 	key := `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
-	cmd := exec.Command("reg", "add", key, "/v", AppName, "/t", "REG_SZ", "/d", exePath, "/f")
+	cmd := exec.Command("reg", "add", key, "/v", AppName, "/t", "REG_SZ", "/d", exePath+" --autostart", "/f")
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		HideWindow: true,
 	}
@@ -89,6 +89,9 @@ func (a *AutoStartService) isAutoStartEnabledWindows() bool {
 	key := `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
 	// 使用 reg query 查询
 	cmd := exec.Command("reg", "query", key, "/v", AppName)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 	err := cmd.Run()
 	return err == nil
 }
@@ -112,6 +115,7 @@ func (a *AutoStartService) enableAutoStartMac() error {
     <key>ProgramArguments</key>
     <array>
         <string>%s</string>
+        <string>--autostart</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -142,7 +146,7 @@ func (a *AutoStartService) enableAutoStartLinux() error {
 	content := fmt.Sprintf(`[Desktop Entry]
 Type=Application
 Name=%s
-Exec=%s
+Exec=%s --autostart
 Terminal=false
 `, AppName, exePath)
 
