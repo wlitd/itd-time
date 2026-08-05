@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -27,6 +28,10 @@ type RemindService struct {
 	isRemind bool
 	style    string
 	mode     string
+	title    string
+	// 以下两个字段从主进程 CLI 传入，供提醒弹窗进程计算文案使用
+	offTime        string
+	advanceMinutes int
 
 	mu  sync.Mutex
 	cfg RemindConfig
@@ -47,6 +52,12 @@ func (s *RemindService) ParseArgs(args []string) {
 			s.style = strings.TrimPrefix(arg, "--style=")
 		case strings.HasPrefix(arg, "--mode="):
 			s.mode = strings.TrimPrefix(arg, "--mode=")
+		case strings.HasPrefix(arg, "--title="):
+			s.title = strings.TrimPrefix(arg, "--title=")
+		case strings.HasPrefix(arg, "--offtime="):
+			s.offTime = strings.TrimPrefix(arg, "--offtime=")
+		case strings.HasPrefix(arg, "--advance="):
+			s.advanceMinutes, _ = strconv.Atoi(strings.TrimPrefix(arg, "--advance="))
 		}
 	}
 }
@@ -60,6 +71,15 @@ func (s *RemindService) Style() string { return s.style }
 // Mode 获取提醒弹窗模式
 func (s *RemindService) Mode() string { return s.mode }
 
+// TodoTitle 获取待办标题（仅 todoAdvance 模式有效）
+func (s *RemindService) TodoTitle() string { return s.title }
+
+// OffTime 获取下班时间（提醒弹窗进程用于生成文案）
+func (s *RemindService) OffTime() string { return s.offTime }
+
+// AdvanceMinutes 获取提前提醒分钟数（提醒弹窗进程用于生成文案）
+func (s *RemindService) AdvanceMinutes() int { return s.advanceMinutes }
+
 // Start 启动服务：主进程启动定时器，弹窗进程仅保存 ctx
 func (s *RemindService) Start(ctx context.Context) {
 	s.ctx = ctx
@@ -70,13 +90,27 @@ func (s *RemindService) Start(ctx context.Context) {
 }
 
 // ShowRemind 启动独立的提醒弹窗子进程
-// style 为提醒样式（如 squidward），mode 为提醒模式（advance/offwork/preview）
-func (s *RemindService) ShowRemind(style, mode string) {
+// style 为提醒样式（如 squidward），mode 为提醒模式，title 为待办标题（仅 todoAdvance 模式使用）
+// 同时将 offTime / advanceMinutes 一并传入，供弹窗进程直接生成文案，无需依赖 store
+func (s *RemindService) ShowRemind(style, mode, title string) {
+	s.mu.Lock()
+	cfg := s.cfg
+	s.mu.Unlock()
+
 	exe, err := os.Executable()
 	if err != nil {
 		return
 	}
-	_ = exec.Command(exe, "--remind", "--style="+style, "--mode="+mode).Start()
+	args := []string{"--remind", "--style=" + style, "--mode=" + mode}
+	if title != "" {
+		args = append(args, "--title="+title)
+	}
+	// 传入 offTime / advanceMinutes，避免弹窗进程依赖 localStorage（进程隔离）
+	if cfg.OffTime != "" {
+		args = append(args, "--offtime="+cfg.OffTime)
+	}
+	args = append(args, "--advance="+strconv.Itoa(cfg.AdvanceMinutes))
+	_ = exec.Command(exe, args...).Start()
 }
 
 // SyncConfig 同步提醒配置（由前端调用）
@@ -140,13 +174,13 @@ func (s *RemindService) checkRemind(prev, now time.Time) {
 	if cfg.AdvanceMinutes > 0 {
 		notifyAt := target.Add(-time.Duration(cfg.AdvanceMinutes) * time.Minute)
 		if timeCrossed(prev, now, notifyAt) {
-			s.ShowRemind(cfg.Style, "advance")
+			s.ShowRemind(cfg.Style, "advance", "")
 		}
 	}
 
 	// 下班提醒（倒计时归零）
 	if timeCrossed(prev, now, target) {
-		s.ShowRemind(cfg.Style, "offwork")
+		s.ShowRemind(cfg.Style, "offwork", "")
 	}
 }
 

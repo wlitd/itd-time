@@ -26,12 +26,24 @@ export function ExitApp() {
   return window['go']['main']['App']['ExitApp']();
 }
 
+export function GetRemindAdvanceMinutes() {
+  return window['go']['main']['App']['GetRemindAdvanceMinutes']();
+}
+
 export function GetRemindMode() {
   return window['go']['main']['App']['GetRemindMode']();
 }
 
+export function GetRemindOffTime() {
+  return window['go']['main']['App']['GetRemindOffTime']();
+}
+
 export function GetRemindStyle() {
   return window['go']['main']['App']['GetRemindStyle']();
+}
+
+export function GetTodoTitle() {
+  return window['go']['main']['App']['GetTodoTitle']();
 }
 
 export function GetVersion() {
@@ -46,8 +58,8 @@ export function IsRemindWindow() {
   return window['go']['main']['App']['IsRemindWindow']();
 }
 
-export function ShowRemind(arg1, arg2) {
-  return window['go']['main']['App']['ShowRemind'](arg1, arg2);
+export function ShowRemind(arg1, arg2, arg3) {
+  return window['go']['main']['App']['ShowRemind'](arg1, arg2, arg3);
 }
 
 export function SyncRemindConfig(arg1, arg2, arg3, arg4) {

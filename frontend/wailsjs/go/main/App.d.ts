@@ -14,9 +14,15 @@ export function EnableAutoStart():Promise<void>;
 
 export function ExitApp():Promise<void>;
 
+export function GetRemindAdvanceMinutes():Promise<number>;
+
 export function GetRemindMode():Promise<string>;
 
+export function GetRemindOffTime():Promise<string>;
+
 export function GetRemindStyle():Promise<string>;
+
+export function GetTodoTitle():Promise<string>;
 
 export function GetVersion():Promise<string>;
 
@@ -24,6 +30,6 @@ export function IsAutoStartEnabled():Promise<boolean>;
 
 export function IsRemindWindow():Promise<boolean>;
 
-export function ShowRemind(arg1:string,arg2:string):Promise<void>;
+export function ShowRemind(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SyncRemindConfig(arg1:string,arg2:number,arg3:Array<number>,arg4:string):Promise<void>;

@@ -1,7 +1,7 @@
 export type RemindStyle = 'squidward'
 
-/** 提醒模式：advance=提前提醒 offwork=下班提醒 preview=预览 */
-export type RemindMode = 'advance' | 'offwork' | 'preview'
+/** 提醒模式：advance=提前下班提醒 offwork=下班提醒 todoAdvance=待办提醒 preview=预览 */
+export type RemindMode = 'advance' | 'offwork' | 'todoAdvance' | 'preview'
 
 /**
  * 下班倒计时状态管理 Store

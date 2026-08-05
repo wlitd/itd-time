@@ -29,7 +29,7 @@ export function useOffWorkRemind() {
     if (!isWails())
       return
 
-    ShowRemind(remindStyle.value, mode)
+    ShowRemind(remindStyle.value, mode, '')
   }
 
   return { showRemind }

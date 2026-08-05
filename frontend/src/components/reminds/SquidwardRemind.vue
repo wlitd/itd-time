@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import type { RemindMode } from '@/stores/offWork'
 import { useThemeVars } from 'naive-ui'
-import { useI18n } from 'vue-i18n'
 import squidwardPng from '@/assets/images/squidward.png'
 
-const { mode } = defineProps<{
-  /** 提醒模式 */
-  mode: RemindMode
+/** 提醒弹窗通用展示组件，所有文案通过 props 传入，不内置业务逻辑 */
+defineProps<{
+  /** 提醒标题 */
+  title: string
+  /** 提醒描述 */
+  description: string
+  /** 确认按钮文案 */
+  confirmText: string
+  /** 取消按钮文案 */
+  cancelText: string
 }>()
 
 const emit = defineEmits<{
-  /** 关闭提醒弹窗 */
-  close: []
+  /** 点击确认按钮 */
+  confirm: []
+  /** 点击取消按钮 */
+  cancel: []
 }>()
 
-const { t } = useI18n()
 const themeVars = useThemeVars()
-
-const { offTime, advanceMinutes } = storeToRefs(useOffWorkStore())
-
-/** 是否为提前提醒（预览按下班提醒展示） */
-const isAdvance = computed<boolean>(() => mode === 'advance')
 
 /** 半透明卡片背景色（窗口本身全透明） */
 const cardBgColor = computed<string>(() => `color-mix(in srgb, ${themeVars.value.cardColor} 88%, transparent)`)
@@ -38,26 +39,22 @@ const cardBgColor = computed<string>(() => `color-mix(in srgb, ${themeVars.value
     <div class="flex flex-col gap-3 flex-1 min-w-0">
       <div class="flex items-center gap-2 min-w-0">
         <!-- 纯 CSS 截断兜底，不使用 NEllipsis，避免 tooltip 在小窗内弹出打乱布局 -->
-        <div class="text-sm font-semibold truncate min-w-0">
-          {{ isAdvance ? t('advanceTitle', { minutes: advanceMinutes }) : t('offworkTitle') }}
-        </div>
+        <div class="text-sm font-semibold truncate min-w-0">{{ title }}</div>
       </div>
-      <NText depth="3" class="text-xs truncate block min-w-0">
-        {{ isAdvance ? t('advanceDesc', { offTime }) : t('offworkDesc') }}
-      </NText>
+      <NText depth="3" class="text-xs truncate block min-w-0">{{ description }}</NText>
     </div>
 
     <!-- 操作按钮 -->
     <div class="flex items-center gap-2 shrink-0" style="--wails-draggable: no-drag">
       <div
         class="size-8 rounded-full flex-center cursor-pointer bg-#fa5151 hover:bg-#e64340 transition-colors"
-        :title="t('later')" @click="emit('close')"
+        :title="cancelText" @click="emit('cancel')"
       >
         <div class="i-lucide:x text-white text-base" />
       </div>
       <div
         class="size-8 rounded-full flex-center cursor-pointer bg-#07c160 hover:bg-#06ad56 transition-colors"
-        :title="t('gotIt')" @click="emit('close')"
+        :title="confirmText" @click="emit('confirm')"
       >
         <div class="i-lucide:check text-white text-base" />
       </div>
@@ -79,24 +76,3 @@ const cardBgColor = computed<string>(() => `color-mix(in srgb, ${themeVars.value
   animation: squidward-shake 1.2s ease-in-out infinite;
 }
 </style>
-
-<i18n lang="json">
-{
-  "zh": {
-    "offworkTitle": "我下班了，蟹老板！",
-    "offworkDesc": "时间到，章鱼哥已准时挂钟离岗 🐙",
-    "advanceTitle": "还有 {minutes} 分钟下班",
-    "advanceDesc": "{offTime} 准时跑路，先收拾收拾吧",
-    "later": "再忍忍",
-    "gotIt": "下班！"
-  },
-  "en": {
-    "offworkTitle": "I'm off work, Mr. Krabs!",
-    "offworkDesc": "Time's up, Squidward has clocked out 🐙",
-    "advanceTitle": "{minutes} minutes to go",
-    "advanceDesc": "Leaving at {offTime}, time to pack up",
-    "later": "Hold on",
-    "gotIt": "Off work!"
-  }
-}
-</i18n>

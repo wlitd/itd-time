@@ -73,8 +73,8 @@ func (a *App) OnBeforeClose(ctx context.Context) (prevent bool) {
 // --- 提醒相关 ---
 
 // ShowRemind 启动提醒弹窗子进程
-func (a *App) ShowRemind(style string, mode string) {
-	a.remind.ShowRemind(style, mode)
+func (a *App) ShowRemind(style string, mode string, title string) {
+	a.remind.ShowRemind(style, mode, title)
 }
 
 // SyncRemindConfig 同步提醒配置
@@ -95,6 +95,21 @@ func (a *App) GetRemindStyle() string {
 // GetRemindMode 获取提醒弹窗模式
 func (a *App) GetRemindMode() string {
 	return a.remind.Mode()
+}
+
+// GetTodoTitle 获取待办标题（仅 todoAdvance 模式有效）
+func (a *App) GetTodoTitle() string {
+	return a.remind.TodoTitle()
+}
+
+// GetRemindOffTime 获取下班时间（提醒弹窗进程用于生成文案）
+func (a *App) GetRemindOffTime() string {
+	return a.remind.OffTime()
+}
+
+// GetRemindAdvanceMinutes 获取提前提醒分钟数（提醒弹窗进程用于生成文案）
+func (a *App) GetRemindAdvanceMinutes() int {
+	return a.remind.AdvanceMinutes()
 }
 
 // CloseRemind 关闭提醒弹窗

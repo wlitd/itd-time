@@ -11,6 +11,8 @@ export interface TodoItem {
   deadline: number
   /** TODO 是否完成 */
   completed: boolean
+  /** 是否已触发提醒（持久化，避免重启后重复弹窗） */
+  reminded: boolean
 }
 
 /**
@@ -34,7 +36,7 @@ export const useTodoStore = defineStore('todo', () => {
    * @param todo TODO 项
    */
   function addTodo(todo: Pick<TodoItem, 'title' | 'deadline'>): void {
-    todos.value.push({ id: Date.now().toString(), ...todo, completed: false })
+    todos.value.push({ id: Date.now().toString(), ...todo, completed: false, reminded: false })
   }
 
   /**
@@ -44,7 +46,12 @@ export const useTodoStore = defineStore('todo', () => {
   function updateTodo(todo: TodoItem): void {
     const index = todos.value.findIndex(t => t.id === todo.id)
     if (index !== -1) {
+      const oldDeadline = todos.value[index].deadline
       todos.value[index] = todo
+      // 截止时间变更时重置提醒标记，确保新时间点能再次提醒
+      if (oldDeadline !== todo.deadline) {
+        todos.value[index].reminded = false
+      }
     }
   }
 
@@ -54,8 +61,33 @@ export const useTodoStore = defineStore('todo', () => {
    */
   function toggleTodo(id: string): void {
     const todo = todos.value.find(t => t.id === id)
-    if (todo)
+    if (todo) {
       todo.completed = !todo.completed
+      // 取消完成时重置提醒标记，让用户能再次收到提醒
+      if (!todo.completed) {
+        todo.reminded = false
+      }
+    }
+  }
+
+  /**
+   * 标记 TODO 已提醒（触发提醒弹窗后调用）
+   * @param id TODO ID
+   */
+  function markReminded(id: string): void {
+    const todo = todos.value.find(t => t.id === id)
+    if (todo)
+      todo.reminded = true
+  }
+
+  /**
+   * 重置 TODO 提醒标记
+   * @param id TODO ID
+   */
+  function resetRemind(id: string): void {
+    const todo = todos.value.find(t => t.id === id)
+    if (todo)
+      todo.reminded = false
   }
 
   /**
@@ -84,7 +116,7 @@ export const useTodoStore = defineStore('todo', () => {
       })
   })
 
-  return { todos, addTodo, updateTodo, toggleTodo, removeTodo, sortedTodos }
+  return { todos, addTodo, updateTodo, toggleTodo, removeTodo, sortedTodos, markReminded, resetRemind }
 }, {
   /** 持久化配置 */
   persist: {
