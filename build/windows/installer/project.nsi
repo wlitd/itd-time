@@ -79,4 +79,5 @@ Section "uninstall"
     !insertmacro wails.unassociateCustomProtocols
     !insertmacro wails.deleteUninstaller
     DeleteRegKey HKLM "${APP_REG_KEY}"
+    DeleteRegKey /ifempty HKLM "Software\${INFO_COMPANYNAME}"
 SectionEnd
