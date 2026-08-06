@@ -8,16 +8,16 @@
     !define INFO_PROJECTNAME "ItdTime"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "ItdTime"
+    !define INFO_COMPANYNAME "Wlitd"
 !endif
 !ifndef INFO_PRODUCTNAME
     !define INFO_PRODUCTNAME "ItdTime"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "1.0.0"
+    !define INFO_PRODUCTVERSION "0.1.1"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "Copyright........."
+    !define INFO_COPYRIGHT "Copyright © 2026 Wlitd"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"
