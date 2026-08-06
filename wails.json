@@ -9,5 +9,11 @@
   "author": {
     "name": "Wlitd",
     "email": "2583651948@qq.com"
+  },
+  "info": {
+    "companyName": "Wlitd",
+    "productName": "ItdTime",
+    "productVersion": "0.1.0",
+    "copyright": "Copyright © 2026 Wlitd"
   }
 }
