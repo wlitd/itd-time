@@ -12,8 +12,6 @@ export function DownloadAndInstall(arg1:string):Promise<void>;
 
 export function EnableAutoStart():Promise<void>;
 
-export function ExitApp():Promise<void>;
-
 export function GetRemindAdvanceMinutes():Promise<number>;
 
 export function GetRemindMode():Promise<string>;

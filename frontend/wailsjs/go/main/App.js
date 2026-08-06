@@ -22,10 +22,6 @@ export function EnableAutoStart() {
   return window['go']['main']['App']['EnableAutoStart']();
 }
 
-export function ExitApp() {
-  return window['go']['main']['App']['ExitApp']();
-}
-
 export function GetRemindAdvanceMinutes() {
   return window['go']['main']['App']['GetRemindAdvanceMinutes']();
 }
