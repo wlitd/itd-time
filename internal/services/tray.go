@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"os"
 
 	"fyne.io/systray"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -22,6 +23,11 @@ func NewTrayService(iconBytes []byte) *TrayService {
 // IsQuiting 是否正在退出（由退出菜单项触发）
 func (s *TrayService) IsQuiting() bool {
 	return s.isQuiting
+}
+
+func (s *TrayService) Quit() {
+	s.isQuiting = true
+	systray.Quit()
 }
 
 // Run 启动系统托盘（阻塞，应在 goroutine 中调用）
@@ -45,12 +51,13 @@ func (s *TrayService) onReady() {
 			case <-mShow.ClickedCh:
 				runtime.WindowShow(s.ctx)
 			case <-mQuit.ClickedCh:
-				s.isQuiting = true
-				systray.Quit()
+				s.Quit()
 				runtime.Quit(s.ctx)
 			}
 		}
 	}()
 }
 
-func (s *TrayService) onExit() {}
+func (s *TrayService) onExit() {
+	os.Exit(0)
+}

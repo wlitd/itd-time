@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"syscall"
 	"time"
 
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -31,7 +32,8 @@ type UpdateResult struct {
 }
 
 type UpdaterService struct {
-	ctx context.Context
+	ctx  context.Context
+	tray *TrayService
 }
 
 func NewUpdaterService() *UpdaterService {
@@ -39,8 +41,9 @@ func NewUpdaterService() *UpdaterService {
 }
 
 // Startup 必须在 app.go 的 startup 中调用，传入 context
-func (s *UpdaterService) Startup(ctx context.Context) {
+func (s *UpdaterService) Startup(ctx context.Context, tray *TrayService) {
 	s.ctx = ctx
+	s.tray = tray
 }
 
 // CheckForUpdate 检查更新
@@ -117,17 +120,48 @@ func (s *UpdaterService) DownloadAndInstall(url string) error {
 	}
 
 	// 5. 运行安装包
-	return s.runInstaller(filePath)
+	exePath, _ := os.Executable()
+	installPath := filepath.Dir(exePath)
+	if err := s.runInstaller(filePath, installPath); err != nil {
+		return err
+	}
+
+	// 6. 启动独立后台进程，10秒后删除安装包（Go 进程退出后它仍会继续运行）
+	deleteCmd := fmt.Sprintf("Start-Sleep 10; Remove-Item -Force '%s'", filePath)
+	cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", deleteCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("启动删除进程失败: %v", err)
+	}
+
+	// 7. 关键：启动安装程序后，延迟退出当前应用
+	// 否则安装程序无法覆盖正在运行的 exe 文件
+	go func() {
+		time.Sleep(1 * time.Second)
+		if s.tray != nil {
+			s.tray.Quit()
+		}
+		wailsRuntime.Quit(s.ctx)
+	}()
+
+	return nil
 }
 
 // runInstaller 运行安装程序
-func (s *UpdaterService) runInstaller(filePath string) error {
+func (s *UpdaterService) runInstaller(filePath string, installPath string) error {
 	var cmd *exec.Cmd
 
 	switch runtime.GOOS {
 	case "windows":
-		// Windows: 直接启动安装包
-		cmd = exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", fmt.Sprintf("Start-Process -FilePath '%s' -Verb RunAs", filePath))
+		// /S        = NSIS 静默安装（大写，区分大小写）
+		// -Verb RunAs = 请求管理员权限（安装到 Program Files 必需）
+		psCmd := fmt.Sprintf(
+			"Start-Process -FilePath '%s' -ArgumentList '/S','/D=%s' -Verb RunAs -WindowStyle Hidden",
+			filePath,
+			installPath,
+		)
+		cmd = exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", psCmd)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	case "darwin":
 		// Mac: 打开 dmg 镜像，用户手动拖拽
 		cmd = exec.Command("open", filePath)

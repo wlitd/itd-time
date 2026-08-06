@@ -42,7 +42,7 @@ func NewApp() *App {
 // startup Wails 启动回调，初始化上下文并分发到各服务
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	a.updater.Startup(ctx)
+	a.updater.Startup(ctx, a.tray)
 	a.remind.Start(ctx)
 
 	if a.remind.IsRemind() {
@@ -149,9 +149,4 @@ func (a *App) CheckForUpdate() services.UpdateResult {
 // DownloadAndInstall 下载并安装更新
 func (a *App) DownloadAndInstall(url string) error {
 	return a.updater.DownloadAndInstall(url)
-}
-
-// ExitApp 彻底退出应用进程（安装更新前使用，避免托盘残留阻止 exe 覆盖）
-func (a *App) ExitApp() {
-	os.Exit(0)
 }
