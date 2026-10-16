@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useTodoRemind } from '@/composables/useTodoRemind'
+import Toast from 'primevue/toast'
+import ConfirmPopup from 'primevue/confirmpopup'
+import { isRemindWindow } from './shared/env'
+import MainView from './pages/MainView.vue'
+import RemindWindow from './features/remind/RemindWindow.vue'
 
-const { nTheme, nThemeOverride } = storeToRefs(useThemeStore())
-const { locale } = storeToRefs(useLocaleStore())
-
-// 启动 TODO 提醒轮询（主窗口全局生效）
-useTodoRemind()
+// 主窗与提醒窗共用同一入口，由 URL query（?remind=1）区分窗型。
+const isRemind = isRemindWindow()
 </script>
 
 <template>
-  <NConfigProvider
-    class="h-full" :theme="nTheme" :theme-overrides="nThemeOverride" :locale="locale.nLocale"
-    :date-locale="locale.nDateLocale"
-  >
-    <RouterView />
-  </NConfigProvider>
+  <Toast position="top-right" />
+  <ConfirmPopup />
+  <RemindWindow v-if="isRemind" />
+  <MainView v-else />
 </template>

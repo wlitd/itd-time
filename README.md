@@ -1,143 +1,166 @@
 # ItdTime ⏰
 
+**English** | [简体中文](./README-zh.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Wails](https://img.shields.io/badge/Wails-v2-DF0000?logo=wails&logoColor=white)](https://wails.io/)
-[![Go](https://img.shields.io/badge/Go-1.23+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
-[![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Wails](https://img.shields.io/badge/Wails-v3--beta-DF0000?logo=go&logoColor=white)](https://v3.wails.io/)
+[![Go](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
 
-> ⚠️ **活跃开发已迁移至 [`refactor/wails-v3`](https://github.com/wlitd/itd-time/tree/refactor/wails-v3) 分支**：基于 Wails v3 重写（单进程多窗口提醒编排、PrimeVue 4 新 UI、应用内自更新）。
-> 当前 main 分支为 v2 旧版代码，仅作留档；合并完成后本公告将移除。
-
-> I'm off duty! —— 一个下班提醒 + 待办提醒的桌面小应用
+> I'm off duty! — a tiny desktop app for off-work countdown & to-do reminders
 >
-> 到点就要准时挂钟离岗 ⏰
+> Clock out on time, every time ⏰
 
-`ItdTime` 是一款基于 **Wails + Go + Vue 3** 的轻量桌面应用，核心功能是下班倒计时与到点提醒：设定下班时间后，应用会在屏幕右下角弹出置顶提醒弹窗，提醒你准时跑路；同时还提供一个待办提醒列表，管理零散的计划事项。
+`ItdTime` is a lightweight desktop app built with **Wails v3 + Go + Vue 3**: set your off-work time and a countdown tells you how long until freedom; when it hits zero, a topmost reminder card pops up at the bottom-right of the screen to send you home on time. It also keeps a to-do reminder list for scattered plans, and supports in-app self-update.
 
-## ✨ 功能特性
+## ✨ Features
 
-- **自由倒计时**：LED 数字风格的下班倒计时，实时显示距离下班还有多久
-- **到点提醒**：倒计时归零时，屏幕右下角弹出置顶提醒弹窗
-- **提前提醒**：支持设置提前 N 分钟提醒，先收拾收拾再跑路
-- **重复规则**：按周一 ~ 周日自由设置重复提醒日
-- **提醒样式**：提醒弹窗支持多种样式，自由选择、持续扩充中
-- **预览提醒**：设置面板内一键预览提醒弹窗效果
-- **待办提醒列表**：添加、管理更多计划提醒事项
-- **系统托盘**：关闭窗口自动隐藏到托盘，后台持续守候，不错过提醒
-- **主题 / 多语言**：深浅色主题切换，中英文双语界面
+- **Countdown**: LED-style off-work countdown showing the time remaining
+- **On-time reminder**: a topmost card pops up at the bottom-right when it hits zero; multiple cards **stack in parallel with offsets** (never block each other)
+- **Early reminder**: get notified N minutes ahead so you can wrap up first
+- **Repeat days**: freely pick which weekdays (Mon–Sun) to remind
+- **Reminder styles**: a pluggable style registry (currently "Squidward"), more coming
+- **Preview**: one-click preview of the reminder popup right in the settings panel
+- **To-do reminders**: add and manage extra planned reminders that pop up when due
+- **System tray**: closing the window hides it to the tray, watching on in the background
+- **Autostart**: silently launches at login (resides in the tray), toggleable in one click
+- **In-app self-update**: check → download (with progress) → replace & restart in one click, verified by sha256
+- **Theme / i18n**: light & dark themes, Chinese / English UI
 
-## 🖥️ 提醒弹窗
+## 🏗️ Architecture
 
-提醒弹窗的基础交互：
-
-- 显示在屏幕**工作区右下角**（自动避开任务栏，适配 DPI 缩放）
-- 无边框、置顶、半透明圆角卡片，支持拖拽
-- 弹窗内容由所选提醒样式组件渲染，各样式可自由发挥
-- 30 秒无操作自动关闭
-
-由于 Wails v2 仅支持单窗口，提醒弹窗采用**独立进程**方案实现：
+Single process, multiple windows (Wails v3): reminder popups are frameless transparent always-on-top windows in the same process, created / positioned / closed directly by a Go-side orchestrator.
 
 ```
-主进程（主窗口 + 托盘 + Go 秒级定时器）
-   │  到达提醒时间点
-   ▼
-exec 自身 --remind --style=xxx --mode=xxx
-   │
-   ▼
-提醒进程（透明置顶小窗，Win32 API 定位右下角）
+Main process (single exe)
+├── Main window (372×600 frameless, custom titlebar drawn by the frontend)
+├── Reminder windows ×N (380×64 transparent topmost cards, stacked bottom-up
+│   at the bottom-right with offsets, capped at 6)
+├── Go-side 1s polling scheduler — the decision logic is a pure function
+│   (domain.NextFires, unit-tested), immune to WebView background throttling;
+│   each card closes automatically after 20s on its own timer
+└── Tray / autostart / self-update — all native Wails v3 capabilities
+    (SystemTray / Autostart / updater)
 ```
 
-- 提醒时机判断放在 **Go 端定时器**（`remind.go`），不受 WebView 后台节流影响
-- 前端配置（下班时间 / 提前分钟数 / 重复日 / 样式）变更时实时同步到 Go 端
-- 提醒模式：`advance` 提前提醒 / `offwork` 下班提醒 / `preview` 预览（预览按下班提醒展示）
+The backend uses a lightweight DDD layering, with **data sovereignty on the Go side** (a single JSON store; the frontend reads/writes through typed bindings):
 
-## 🛠️ 技术栈
+```
+internal/
+├── api/        # Services bound to the frontend: settings / todos / system / update
+├── domain/     # Domain models + pure scheduling function (NextFires) + unit tests
+├── reminder/   # Coordinator: polling, parallel stacked popups, Dismiss/Preview
+└── storage/    # Single-file JSON persistence (xdg data directory)
+```
 
-| 分类 | 技术 |
+## 🛠️ Tech Stack
+
+| Area | Technology |
 | --- | --- |
-| 桌面框架 | [Wails v2](https://wails.io/)（Go 1.23） |
-| 前端框架 | Vue 3 + Vite 8 + TypeScript |
-| UI 组件库 | [Naive UI](https://www.naiveui.com/) |
-| 原子化 CSS | [UnoCSS](https://unocss.dev/)（Lucide 图标） |
-| 状态管理 | Pinia + pinia-plugin-persistedstate |
-| 国际化 | vue-i18n（SFC `<i18n>` 块，中英双语） |
-| 系统托盘 | [fyne.io/systray](https://github.com/fyne-io/systray) |
-| 工具库 | VueUse / dayjs |
+| Desktop framework | [Wails v3](https://v3.wails.io/) (beta.29) + [go-task](https://taskfile.dev/) orchestration |
+| Backend | Go 1.25 |
+| Frontend | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 5.9 |
+| UI library | [PrimeVue 4](https://primevue.org/) (custom theme preset, light & dark) |
+| Atomic CSS | [UnoCSS](https://unocss.dev/) (Lucide / Flag icon sets) |
+| State | Pinia 4 |
+| i18n | vue-i18n 11 (zh-CN / en) |
+| Auto-import | unplugin-auto-import + unplugin-vue-components |
+| Self-update | Wails v3 updater + endpoint provider (static manifest + sha256) |
 
-## 🚀 快速开始
+## 🚀 Getting Started
 
-### 环境要求
+### Prerequisites
 
-- [Go](https://go.dev/) 1.23+
-- [Node.js](https://nodejs.org/) 18+ 与 [pnpm](https://pnpm.io/)
-- [Wails CLI](https://wails.io/docs/gettingstarted/installation)：`go install github.com/wailsapp/wails/v2/cmd/wails@latest`
-- Windows 需安装 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Win10/11 一般已内置）
+- [Go](https://go.dev/) 1.25+
+- [Node.js](https://nodejs.org/) 20+ with [pnpm](https://pnpm.io/)
+- Wails v3 CLI: `go install github.com/wailsapp/wails/v3/cmd/wails3@latest` (this project targets `beta.29`)
+- [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) on Windows (usually preinstalled on Win10/11)
 
-### 开发
+### Development
 
-```bash
-# 在项目根目录启动开发模式（热重载）
-wails dev
+```powershell
+# At the repository root (Windows PowerShell; pnpm must be specified)
+$env:PACKAGE_MANAGER = 'pnpm'
+wails3 task dev          # hot reload, frontend dev port defaults to 9245
 ```
 
-如需单独调试前端（浏览器环境，Wails 绑定自动降级为空操作）：
+To debug the frontend standalone (pure browser environment; Wails binding calls degrade to placeholders via `isWails()`):
 
 ```bash
 cd frontend
 pnpm install
 pnpm dev
+# Preview a reminder card directly in the browser:
+# http://localhost:9245/?remind=1&kind=offwork&title=Test&id=1
 ```
 
-> 浏览器调试提醒弹窗样式：访问 `/remind?style=squidward&mode=offwork`（`mode` 可选 `advance` / `offwork` / `preview`）
+### Build / Package
 
-### 构建
+```powershell
+wails3 task build                              # dev-mode build → bin/ItdTime.exe
+wails3 task package INSTALL_SCOPE=user         # NSIS per-user installer → bin/ItdTime-amd64-installer.exe
+```
+
+> `INSTALL_SCOPE=user` installs into `%LOCALAPPDATA%\Programs\ItdTime` without UAC, which also lets in-app self-update replace the binary in place.
+
+## 🔄 Self-Update & Release Flow
+
+The update endpoint is fixed at `https://wlitd.com/updates/manifest.json` ([build/updates/manifest.json](./build/updates/manifest.json) is its publishing source). One-command release (Git Bash):
 
 ```bash
-# 构建生产版本，产物位于 build/bin/
-wails build
+bash scripts/release.sh 1.1.0   # sync version across 5 places → package → copy artifact → backfill size/digest → verify
+bash scripts/release.sh         # rebuild without bumping the version
 ```
 
-## 📁 项目结构
+The script automates everything except the upload itself; edit `notes` in `manifest.json` (shown in the update dialog) manually before releasing. Two files must be uploaded to the server's `updates/` directory: `manifest.json` and `ItdTime-<version>-windows-amd64.exe` (the raw exe is what in-app updates swap in — not the installer).
+
+Manual equivalent (fallback):
+
+1. **Sync the version** (four places): `var version` in `main.go`, `build/config.yml`, `build/windows/info.json`, `build/windows/nsis/wails_tools.nsh`
+2. Package: `wails3 task package INSTALL_SCOPE=user`
+3. Copy the artifact: `bin/ItdTime.exe` → `bin/ItdTime-<version>-windows-amd64.exe`
+4. Backfill `size` (exact byte count of the artifact) and `digest` (base64 of the raw sha256 bytes) in [manifest.json](./build/updates/manifest.json)
+5. Upload both `manifest.json` and the exe to the server's `updates/` directory
+
+Updates apply via rename-aside in place (the running exe is renamed to `.old`, the new file lands, then the app restarts); stale `.old` files are cleaned up automatically on next startup.
+
+## 🎨 Adding a New Reminder Style
+
+1. Create a style component under `frontend/src/features/remind/` (see `SquidwardRemind.vue`)
+2. Register the style → component mapping in `resolveRemind` inside `registry.ts`
+3. The style enum lives in the Go backend (`internal/domain`, `RemindStyle`) — new styles require a backend update and regenerated bindings
+
+## 📁 Project Structure
 
 ```
 itd-time/
-├── main.go                 # 应用入口，主窗口 / 提醒弹窗两种启动配置
-├── app.go                  # App 结构体：启动参数解析、托盘、生命周期
-├── remind.go               # 提醒核心：Go 端定时器、提醒进程拉起、前端绑定方法
-├── winpos_windows.go       # Win32 API 将提醒弹窗定位到工作区右下角
-├── wails.json              # Wails 项目配置
+├── main.go                  # Entry: assembles Services, main window, tray
+├── Taskfile.yml             # go-task root orchestration (dev/build/package dispatch per platform)
+├── scripts/release.sh       # one-command release script (Git Bash, see Release Flow)
+├── internal/                # Go backend (api / domain / reminder / storage, see Architecture)
+├── build/
+│   ├── config.yml           # Wails v3 build config (info section = version metadata source)
+│   ├── appicon.png          # Single source for app/tray icons (generates ico/icns)
+│   ├── windows/             # exe version resources, NSIS installer scripts
+│   └── updates/             # self-update manifest (publishing source)
 └── frontend/
-    ├── wailsjs/            # Wails 自动生成的 Go 绑定与运行时
+    ├── DESIGN.md            # Design system — single source of truth
     └── src/
-        ├── components/
-        │   ├── reminds/    # 提醒弹窗样式组件（扩充新样式放这里）
-        │   ├── ui/         # 浮动标签风格的基础组件（输入框、选择器等）
-        │   ├── CountdownCard.vue    # 倒计时卡片 + 下班提醒设置弹窗
-        │   ├── RemindList.vue       # 待办提醒列表
-        │   └── RemindStyleSelect.vue# 提醒样式选择器
-        ├── composables/
-        │   └── useOffWorkRemind.ts  # 提醒配置同步 + 手动弹出提醒
-        ├── pages/
-        │   ├── index.vue   # 主页面
-        │   └── remind.vue  # 提醒弹窗页面（样式分发、自动关闭）
-        ├── router/         # 路由与守卫（提醒进程重定向到 /remind）
-        └── stores/         # Pinia 状态（下班设置、待办、主题、语言）
+        ├── core/            # i18n / PrimeVue theme preset / bindings wrapper / global store
+        ├── features/        # By domain: countdown / remind / settings / shell / todos / update
+        ├── pages/           # MainView (reminder windows are dispatched by App via URL)
+        ├── shared/          # Runtime environment detection, date utils
+        └── styles/          # CSS variables + LED font
 ```
 
-## 🎨 扩充新的提醒样式
+## 📄 Notes
 
-1. 在 `frontend/src/components/reminds/` 新建样式组件（接收 `mode` prop，发出 `close` 事件），可参考 `SquidwardRemind.vue`
-2. 在 `frontend/src/stores/offWork.ts` 的 `RemindStyle` 类型中追加样式标识
-3. 在 `frontend/src/pages/remind.vue` 的 `remindComponents` 映射中注册组件
-4. 在 `frontend/src/components/RemindStyleSelect.vue` 的下拉选项中添加该样式
-
-## 📄 说明
-
-- 主窗口为固定尺寸（348 × 512）的无边框窗口，通过顶部栏拖拽移动
-- 点击窗口关闭按钮不会退出应用，而是隐藏到系统托盘；如需彻底退出，请使用托盘菜单的「退出应用」
-- 应用目前面向 Windows 平台（系统托盘、提醒弹窗右下角定位依赖 Win32 API）
+- The main window is a fixed-size (372 × 600) frameless window, moved by dragging its top bar
+- Clicking the close button hides the app to the system tray instead of quitting; use "Exit" in the tray menu to quit fully
+- The app currently targets Windows (the macOS build chain is kept via Wails but not released)
 
 ---
 
-By [Wlitd](mailto:2583651948@qq.com) · 祝大家都能准时下班 🎉
+By [Wlitd](mailto:2583651948@qq.com) · May everyone clock out on time 🎉
