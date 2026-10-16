@@ -42,7 +42,10 @@ const phaseText = computed<string>(() => {
     case 'ready':
       return t('installed')
     case 'error':
-      return state.error === 'web' ? t('isWeb') : t('checkFailed')
+      if (state.error === 'web')
+        return t('isWeb')
+      // 下载阶段失败（如弱网超时）与检查阶段失败分开表述，避免误导。
+      return state.errorStage === 'download' ? t('downloadFailed') : t('checkFailed')
     default:
       return state.info ? t('newVersionFound', { version: state.info.version }) : ''
   }
@@ -116,7 +119,17 @@ const phaseText = computed<string>(() => {
           </template>
         </Button>
         <Button
-          v-if="state.phase === 'error'"
+          v-if="state.phase === 'error' && state.errorStage === 'download' && state.info"
+          :label="t('retryDownload')"
+          :loading="isBusy"
+          @click="download"
+        >
+          <template #icon>
+            <i class="i-lucide-download" />
+          </template>
+        </Button>
+        <Button
+          v-if="state.phase === 'error' && !(state.errorStage === 'download' && state.info)"
           :label="t('checkUpdate')"
           @click="check()"
         >
@@ -136,6 +149,8 @@ zh-CN:
   installed: 已就绪，等待安装
   isWeb: 浏览器环境不支持检查更新！
   checkFailed: 检查更新失败！
+  downloadFailed: 下载更新失败，请检查网络后重试！
+  retryDownload: 重试下载
   upToDate: 已是最新版本
   upToDateDetail: "当前版本 v{version}，无需更新"
   upToDateDetailFallback: 当前已是最新版本
@@ -151,6 +166,8 @@ en-US:
   installed: Ready to install
   isWeb: Browser environment does not support checking for updates!
   checkFailed: Update check failed!
+  downloadFailed: Update download failed. Check your connection and retry!
+  retryDownload: Retry Download
   upToDate: You're up to date
   upToDateDetail: "Version v{version} is the latest"
   upToDateDetailFallback: You're running the latest version

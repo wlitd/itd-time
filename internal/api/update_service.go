@@ -2,8 +2,10 @@ package api
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/updater"
@@ -12,6 +14,24 @@ import (
 	"itdtime/internal/domain"
 	"itdtime/internal/storage"
 )
+
+// 更新链路各阶段的 ctx 上限：manifest 拉取轻量给 1 分钟；
+// 产物下载允许慢网但需防死连接无限跑飞，给 30 分钟。
+const (
+	checkTimeout    = time.Minute
+	downloadTimeout = 30 * time.Minute
+)
+
+// newUpdateHTTPClient 构造更新通道专用 HTTP 客户端。
+// 框架 endpoint provider 默认 client 的 Timeout 是 30s，而 http.Client.Timeout
+// 按「读完整个响应体」计时，13MB 产物在弱网下必被误杀。
+// 这里取消总超时，改用 ResponseHeaderTimeout 防服务端黑洞；
+// 整体上限由各方法传入的 ctx 控制。
+func newUpdateHTTPClient() *http.Client {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.ResponseHeaderTimeout = 30 * time.Second
+	return &http.Client{Transport: transport}
+}
 
 // updateManifestURL 指向发布在云服务器上的 Wails Update Manifest（静态 JSON）。
 // 采用 V3 原生 updater + endpoint provider：
@@ -63,8 +83,9 @@ func (s *UpdateService) ServiceStartup(_ context.Context, _ application.ServiceO
 	cleanupStaleBinaries()
 
 	provider, err := endpoint.New(endpoint.Config{
-		URL:     updateManifestURL,
-		Channel: updateChannel,
+		URL:        updateManifestURL,
+		Channel:    updateChannel,
+		HTTPClient: newUpdateHTTPClient(),
 	})
 	if err != nil {
 		return err
@@ -103,7 +124,9 @@ func cleanupStaleBinaries() {
 
 // CheckForUpdate 主动检查更新。返回 HasUpdate=false 表示已最新或该版本已被跳过。
 func (s *UpdateService) CheckForUpdate() (UpdateInfo, error) {
-	rel, err := s.app.Updater.Check(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), checkTimeout)
+	defer cancel()
+	rel, err := s.app.Updater.Check(ctx)
 	if err != nil {
 		return UpdateInfo{}, err
 	}
@@ -123,7 +146,9 @@ func (s *UpdateService) CheckForUpdate() (UpdateInfo, error) {
 // DownloadAndInstall 下载上一步 Check 命中的版本，校验 sha256 并暂存待替换。
 // 完成后进入 Ready 态，需再调用 ApplyUpdate 才会真正替换二进制并重启。
 func (s *UpdateService) DownloadAndInstall() error {
-	return s.app.Updater.DownloadAndInstall(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), downloadTimeout)
+	defer cancel()
+	return s.app.Updater.DownloadAndInstall(ctx)
 }
 
 // ApplyUpdate 用已暂存的新版本替换当前二进制并重启（会退出当前进程）。

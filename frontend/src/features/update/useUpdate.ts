@@ -13,11 +13,15 @@ interface ProgressPayload {
   total: number
 }
 
+/** 失败发生阶段：决定错误文案与重试动作（检查失败→重新检查；下载失败→重试下载）。 */
+export type UpdateErrorStage = 'check' | 'download'
+
 interface UpdateState {
   phase: UpdatePhase
   info: UpdateInfo | null
   percent: number
   error: string
+  errorStage: UpdateErrorStage
   dialogVisible: boolean
 }
 
@@ -27,6 +31,7 @@ const state = reactive<UpdateState>({
   info: null,
   percent: 0,
   error: '',
+  errorStage: 'check',
   dialogVisible: false,
 })
 
@@ -53,6 +58,9 @@ function bindEvents(): void {
   Events.On(Updater.Events.Error, (e): void => {
     const info = e.data as unknown as { message?: string }
     state.error = info?.message ?? '更新失败'
+    // 下载进行中收到错误事件：归属下载阶段，文案/重试按下载处理。
+    if (state.phase === 'downloading')
+      state.errorStage = 'download'
     state.phase = 'error'
   })
 }
@@ -76,6 +84,7 @@ async function check(options: CheckOptions = {}): Promise<void> {
   bindEvents()
   state.phase = 'checking'
   state.error = ''
+  state.errorStage = 'check'
   state.percent = 0
   state.info = null
   try {
@@ -110,8 +119,19 @@ async function check(options: CheckOptions = {}): Promise<void> {
 /** 下载并暂存更新。 */
 async function download(): Promise<void> {
   state.phase = 'downloading'
+  state.error = ''
+  state.errorStage = 'download'
   state.percent = 0
-  await UpdateService.DownloadAndInstall()
+  try {
+    await UpdateService.DownloadAndInstall()
+  }
+  catch (err) {
+    // Go 侧同期会 emit 错误事件，此处兜底覆盖同步返回错误的场景，置态幂等无冲突。
+    state.error = String(err)
+    state.phase = 'error'
+    state.errorStage = 'download'
+    state.dialogVisible = true
+  }
 }
 
 /** 用已暂存版本替换二进制并重启。 */
