@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "channel": "stable",
+  "name": "ItdTime 1.0.0",
+  "notes": "首个正式版本：下班倒计时与待办提醒，支持深色/浅色主题、系统托盘、开机自启与应用内自更新。",
+  "publishedAt": "2026-10-16T00:00:00Z",
+  "artifacts": [
+    {
+      "url": "ItdTime-1.0.0-windows-amd64.exe",
+      "filename": "ItdTime.exe",
+      "filetype": "exe",
+      "size": 13276160,
+      "platform": "windows",
+      "arch": "amd64",
+      "digestAlgo": "sha256",
+      "digest": "LGKNReaQ4SbG8X7rByPE1xFM4X8C0Brl8SqctCu4IsA="
+    }
+  ]
+}

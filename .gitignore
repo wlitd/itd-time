@@ -1,53 +1,22 @@
-# ===== Wails =====
-# 构建产物（build 目录下的图标、清单等资源需要保留，仅忽略输出的二进制）
-build/bin
-# Wails 生成的前端依赖校验缓存
-frontend/package.json.md5
+# ===== 构建 / 生成产物 =====
+.task/
+/bin/
+frontend/dist/
+frontend/node_modules/
 
-# ===== Go =====
-# 根目录下手动 go build 产生的二进制
-*.exe
-*.exe~
-# 测试与性能分析产物
-*.test
-*.out
-coverage.txt
-# vendor 目录（如后续使用 go mod vendor 可按需删除此行）
-vendor/
+# Wails v3 生成的 TypeScript 绑定（构建/开发时自动再生，无需入库）
+frontend/bindings/
 
-# ===== 前端（Vue / Vite / pnpm）=====
-node_modules
-frontend/dist
-auto-imports.d.ts
-components.d.ts
-pnpm-lock.yaml
-# Vite 缓存与构建信息
-frontend/.vite/
-*.tsbuildinfo
-# ESLint 缓存
-.eslintcache
-# 日志
-*.log
-npm-debug.log*
-pnpm-debug.log*
-lerna-debug.log*
+# macOS 图标派生物：由 build/appicon.png 经 generate:icons 再生，无需入库
+build/darwin/icons.icns
+build/darwin/Assets.car
 
-# ===== 环境变量 =====
-# 基础 .env（如 frontend/.env）为非敏感配置需要提交，仅忽略本地覆盖文件
-.env.local
-.env.*.local
+# 发布清单 build/updates/manifest.json 需入库；发布用 exe 产物在 bin/，勿混入此目录
+build/updates/*.exe
 
-# ===== IDE / 编辑器 =====
-.idea/
-.vscode/
+# ===== 安装器附属（构建时下载/生成） =====
+build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
+
+# ===== 编辑器 / IDE 与本地工具配置 =====
 .qoder/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# ===== 操作系统 =====
-.DS_Store
-Thumbs.db
-Desktop.ini
+.vscode/
