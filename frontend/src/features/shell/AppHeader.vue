@@ -27,6 +27,11 @@ const autostart = computed<boolean>({
   set: (v: boolean): Promise<void> => store.setAutostart(v),
 })
 
+const checkOnLaunch = computed<boolean>({
+  get: () => store.update.checkOnLaunch,
+  set: (v: boolean): Promise<void> => store.setCheckOnLaunch(v),
+})
+
 interface LanguageMeta {
   code: AppLocale
   label: string
@@ -145,6 +150,15 @@ async function onQuit(): Promise<void> {
           <ToggleSwitch v-model="autostart" />
         </div>
 
+        <!-- 启动检查更新 -->
+        <div class="flex items-center justify-between px-2.5 py-2">
+          <span class="flex items-center gap-2.5 text-[14px] text-[var(--app-text)]">
+            <i class="i-lucide-refresh-cw text-base text-[var(--app-muted)]" />
+            {{ t('checkUpdateOnLaunch') }}
+          </span>
+          <ToggleSwitch v-model="checkOnLaunch" />
+        </div>
+
         <!-- 检查更新 -->
         <button :class="itemCls" @click="onCheckUpdate">
           <i class="i-lucide-cloud-download text-base text-[var(--app-muted)]" />
@@ -174,6 +188,7 @@ zh-CN:
   title: 我免费啦！
   version: 版本信息
   selfStart: 开机自启
+  checkUpdateOnLaunch: 启动检查更新
   checkUpdate: 检查更新
   hideToTray: 隐藏到托盘
   quit: 退出
@@ -181,6 +196,7 @@ en-US:
   title: I'm free!
   version: Version Info
   selfStart: Auto Start
+  checkUpdateOnLaunch: Check on Launch
   checkUpdate: Check for Updates
   hideToTray: Hide to Tray
   quit: Quit

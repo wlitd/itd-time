@@ -118,7 +118,7 @@ const phaseText = computed<string>(() => {
         <Button
           v-if="state.phase === 'error'"
           :label="t('checkUpdate')"
-          @click="check"
+          @click="check()"
         >
           <template #icon>
             <i class="i-lucide-refresh-cw" />

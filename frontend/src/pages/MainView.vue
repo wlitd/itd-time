@@ -1,8 +1,21 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useAppStore } from '../core/stores/app'
+import { useUpdate } from '../features/update/useUpdate'
 import AppHeader from '../features/shell/AppHeader.vue'
 import CountdownCard from '../features/countdown/CountdownCard.vue'
 import TodoList from '../features/todos/TodoList.vue'
 import UpdateDialog from '../features/update/UpdateDialog.vue'
+
+const store = useAppStore()
+const { check } = useUpdate()
+
+// 启动静默检查更新（偏好开关控制）：仅发现新版本时弹窗，其余一律不打扰。
+// 水合已在 main.ts 挂载前 await 完成，此处读偏好无竞态。
+onMounted((): void => {
+  if (store.update.checkOnLaunch)
+    void check({ silent: true })
+})
 </script>
 
 <template>

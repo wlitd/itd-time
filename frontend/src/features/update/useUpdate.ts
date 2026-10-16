@@ -57,9 +57,17 @@ function bindEvents(): void {
   })
 }
 
+/** 检查更新选项。silent：启动自动检查模式，仅发现新版本时弹窗，无更新/失败均静默不打扰。 */
+export interface CheckOptions {
+  silent?: boolean
+}
+
 /** 主动检查更新。 */
-async function check(): Promise<void> {
+async function check(options: CheckOptions = {}): Promise<void> {
+  const silent = options.silent === true
   if (!isWails()) {
+    if (silent)
+      return
     state.error = 'web'
     state.phase = 'error'
     state.dialogVisible = true
@@ -74,9 +82,13 @@ async function check(): Promise<void> {
     const info = await UpdateService.CheckForUpdate()
     state.info = info
     if (info.hasUpdate) {
-      // 发现新版本：走弹窗（下载 / 安装 / 跳过）
+      // 发现新版本：无论是否静默都走弹窗（下载 / 安装 / 跳过）
       state.phase = 'available'
       state.dialogVisible = true
+    }
+    else if (silent) {
+      // 静默模式无更新：直接回空闲，不触发 Toast。
+      state.phase = 'idle'
     }
     else {
       // 无更新：不弹窗，交由 UpdateDialog 监听转 Toast 提示
@@ -84,6 +96,11 @@ async function check(): Promise<void> {
     }
   }
   catch (err) {
+    if (silent) {
+      // 静默模式失败：不打扰用户，回空闲。
+      state.phase = 'idle'
+      return
+    }
     state.error = String(err)
     state.phase = 'error'
     state.dialogVisible = true

@@ -47,3 +47,11 @@ func (s *SettingsService) SaveTheme(theme domain.ThemePrefs) error {
 		return nil
 	})
 }
+
+// SaveUpdatePrefs 更新更新相关偏好（启动检查开关）并落盘。
+func (s *SettingsService) SaveUpdatePrefs(cfg domain.UpdatePrefs) error {
+	return s.store.Update(func(data *domain.AppData) error {
+		data.Update = cfg
+		return nil
+	})
+}

@@ -5,6 +5,7 @@ import type {
   RemindSettings,
   ThemePrefs,
   Todo,
+  UpdatePrefs,
 } from '../../core/bindings'
 import { RemindStyle, Weekday } from '../../core/bindings'
 import { setAppLocale } from '../../core/i18n'
@@ -22,6 +23,7 @@ function browserDefaults(): {
   offWork: OffWorkConfig
   remind: RemindSettings
   theme: ThemePrefs
+  update: UpdatePrefs
 } {
   return {
     offWork: {
@@ -31,6 +33,7 @@ function browserDefaults(): {
     } as OffWorkConfig,
     remind: { advanceMinutes: 10, style: RemindStyle.RemindStyleSquidward } as RemindSettings,
     theme: { dark: false, locale: 'zh-CN' } as ThemePrefs,
+    update: { checkOnLaunch: true } as UpdatePrefs,
   }
 }
 
@@ -39,6 +42,7 @@ export const useAppStore = defineStore('app', () => {
   const offWork = ref<OffWorkConfig>(browserDefaults().offWork)
   const remind = ref<RemindSettings>(browserDefaults().remind)
   const theme = ref<ThemePrefs>(browserDefaults().theme)
+  const update = ref<UpdatePrefs>(browserDefaults().update)
   const todos = ref<Todo[]>([])
 
   // ==================== 派生 ====================
@@ -74,6 +78,8 @@ export const useAppStore = defineStore('app', () => {
     offWork.value = data.offWork
     remind.value = data.remind
     theme.value = data.theme
+    // 旧版持久化 JSON 无 update 字段时回退默认值（绑定层为 undefined）。
+    update.value = data.update ?? browserDefaults().update
     todos.value = data.todos ?? []
     applyTheme()
     ready.value = true
@@ -133,6 +139,18 @@ export const useAppStore = defineStore('app', () => {
     applyTheme()
     if (isWails())
       await SettingsService.SaveTheme(next)
+  }
+
+  // ==================== 更新偏好 ====================
+
+  async function saveUpdatePrefs(next: UpdatePrefs): Promise<void> {
+    update.value = next
+    if (isWails())
+      await SettingsService.SaveUpdatePrefs(next)
+  }
+
+  async function setCheckOnLaunch(checkOnLaunch: boolean): Promise<void> {
+    await saveUpdatePrefs({ ...update.value, checkOnLaunch })
   }
 
   // ==================== 代办 CRUD ====================
@@ -205,6 +223,7 @@ export const useAppStore = defineStore('app', () => {
     offWork,
     remind,
     theme,
+    update,
     todos,
     autostart,
     sortedTodos,
@@ -217,6 +236,8 @@ export const useAppStore = defineStore('app', () => {
     setRemindStyle,
     toggleDark,
     setLocale,
+    saveUpdatePrefs,
+    setCheckOnLaunch,
     refreshTodos,
     addTodo,
     updateTodo,

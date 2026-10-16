@@ -25,6 +25,7 @@ export type {
   RemindSettings,
   ThemePrefs,
   Todo,
+  UpdatePrefs,
 } from '../../bindings/itdtime/internal/domain/models'
 
 export type { TodoInput, UpdateInfo } from '../../bindings/itdtime/internal/api/models'

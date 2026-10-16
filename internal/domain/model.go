@@ -68,6 +68,12 @@ type ThemePrefs struct {
 	Locale string `json:"locale"`
 }
 
+// UpdatePrefs 更新相关偏好。
+type UpdatePrefs struct {
+	// CheckOnLaunch 应用启动时是否静默检查更新（仅发现新版本时打扰）。
+	CheckOnLaunch bool `json:"checkOnLaunch"`
+}
+
 // AppData 应用持久化数据的根结构，对应存储中的单个 JSON 文件。
 type AppData struct {
 	// SchemaVersion 数据结构版本，用于后续迁移。
@@ -80,6 +86,8 @@ type AppData struct {
 	Todos []Todo `json:"todos"`
 	// Theme 主题偏好。
 	Theme ThemePrefs `json:"theme"`
+	// Update 更新相关偏好（启动检查等）。
+	Update UpdatePrefs `json:"update"`
 	// SkippedVersion 被用户跳过、不再提醒更新的版本号。
 	SkippedVersion string `json:"skippedVersion"`
 }
@@ -99,6 +107,7 @@ func DefaultAppData() AppData {
 		},
 		Todos:          []Todo{},
 		Theme:          ThemePrefs{Dark: false, Locale: "zh-CN"},
+		Update:         UpdatePrefs{CheckOnLaunch: true},
 		SkippedVersion: "",
 	}
 }
