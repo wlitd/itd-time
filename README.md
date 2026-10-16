@@ -6,6 +6,9 @@
 [![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
 
+> ⚠️ **活跃开发已迁移至 [`refactor/wails-v3`](https://github.com/wlitd/itd-time/tree/refactor/wails-v3) 分支**：基于 Wails v3 重写（单进程多窗口提醒编排、PrimeVue 4 新 UI、应用内自更新）。
+> 当前 main 分支为 v2 旧版代码，仅作留档；合并完成后本公告将移除。
+
 > I'm off duty! —— 一个下班提醒 + 待办提醒的桌面小应用
 >
 > 到点就要准时挂钟离岗 ⏰
