@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "channel": "stable",
-  "name": "ItdTime 1.1.0",
-  "notes": "新增「启动检查更新」开关（更多菜单）：开启后应用启动时静默检查更新，仅在发现新版本时弹窗提醒。",
-  "publishedAt": "2026-10-16T08:24:31Z",
+  "name": "ItdTime 1.1.1",
+  "notes": "修复弱网下下载更新被 30 秒总超时打断导致失败的问题，下载失败时可直接重试下载；新增「启动检查更新」开关（更多菜单）：开启后启动时静默检查，仅在发现新版本时弹窗提醒。",
+  "publishedAt": "2026-10-16T08:36:41Z",
   "artifacts": [
     {
-      "url": "ItdTime-1.1.0-windows-amd64.exe",
+      "url": "ItdTime-1.1.1-windows-amd64.exe",
       "filename": "ItdTime.exe",
       "filetype": "exe",
-      "size": 13278208,
+      "size": 13280256,
       "platform": "windows",
       "arch": "amd64",
       "digestAlgo": "sha256",
-      "digest": "FyHZiycM949i56sbRWCLiXS7xMD6PQ2addf3N1L/NkU="
+      "digest": "L2Q7Uf41csQd7jdwz9hUTsZcAwAl1HSNwZm3ZZXNRE4="
     }
   ]
 }
