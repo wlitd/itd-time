@@ -8,12 +8,19 @@
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
+[![Download for Windows](https://img.shields.io/badge/Windows_%E4%B8%8B%E8%BD%BD-v1.1.1-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
 
 > I'm off duty! —— 一个下班提醒 + 待办提醒的桌面小应用
 >
 > 到点就要准时挂钟离岗 ⏰
 
 `ItdTime` 是一款基于 **Wails v3 + Go + Vue 3** 的轻量桌面应用：设定下班时间后，倒计时归零时会在屏幕右下角弹出置顶提醒卡片，提醒你准时跑路；同时提供待办提醒列表管理零散计划，支持应用内自更新。
+
+## ⬇️ 下载
+
+**[Windows 版下载（v1.1.1，`.exe` 安装器）](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
+
+需 Windows 10/11 x64。按用户安装到 `%LOCALAPPDATA%\Programs\ItdTime`，免管理员权限；装好后新版本由应用内自更新送达。
 
 ## ✨ 功能特性
 
