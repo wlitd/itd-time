@@ -51,7 +51,7 @@ export function formatHMS(totalSeconds: number): string {
   return [h, m, s].map(n => String(n).padStart(2, '0')).join(':')
 }
 
-/** 星期序号（0=周日）到 RepeatSetting <i18n> 块内星期短键的映射。 */
+/** 星期序号（0=周日）到全局共享词表 weekdays.* （core/i18n/messages.ts）短键的映射。 */
 export const WEEKDAY_KEYS: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
 /** 毫秒时间戳按当前语言格式化（用于代办截止时间展示）。 */

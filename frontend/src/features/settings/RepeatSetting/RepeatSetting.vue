@@ -20,6 +20,11 @@ function toggle(day: number): void {
     : [...modelValue, day].sort((a, b) => a - b)
   emit('update:modelValue', next)
 }
+
+/** 星期短名：共享词表在 core/i18n 全局 messages，local 作用域缺失时自动回落。 */
+function dayLabel(day: number): string {
+  return t(`weekdays.${WEEKDAY_KEYS[day]}`)
+}
 </script>
 
 <template>
@@ -34,26 +39,7 @@ function toggle(day: number): void {
         : 'border-[var(--app-border)] text-[var(--app-muted)] hover:border-primary hover:text-primary'"
       @click="toggle(day)"
     >
-      {{ t(WEEKDAY_KEYS[day]) }}
+      {{ dayLabel(day) }}
     </button>
   </div>
 </template>
-
-<i18n lang="yaml">
-zh-CN:
-  mon: 一
-  tue: 二
-  wed: 三
-  thu: 四
-  fri: 五
-  sat: 六
-  sun: 日
-en-US:
-  mon: Mon
-  tue: Tue
-  wed: Wed
-  thu: Thu
-  fri: Fri
-  sat: Sat
-  sun: Sun
-</i18n>

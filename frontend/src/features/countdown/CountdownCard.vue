@@ -5,7 +5,7 @@ import { useIntervalFn } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import { useAppStore } from '../../core/stores/app'
-import { formatHMS, nextOffWork, parseOffTime, secondsUntil } from '../../shared/datetime'
+import { formatHMS, nextOffWork, parseOffTime, secondsUntil, WEEKDAY_KEYS } from '../../shared/datetime'
 import SettingsDialog from '../settings/SettingsDialog.vue'
 
 const { t } = useI18n()
@@ -36,9 +36,20 @@ const target = computed<dayjs.Dayjs | null>(() =>
 
 const countdown = computed<string>(() => (target.value ? formatHMS(secondsUntil(target.value, now.value)) : '--:--:--'))
 
-/** 剩余不足一小时：进入冲刺态，用暖色强调。 */
-const isUrgent = computed<boolean>(() => {
+/** 非提醒日：LED 不走倒计时，实时显示当前时刻。 */
+const clock = computed<string>(() => now.value.format('HH:mm:ss'))
+
+/** 非提醒日右侧提示：下一个命中日是周几、几点下班（星期词为共享键，在 core/i18n 全局 messages）。 */
+const nextLeaveText = computed<string>(() => {
   if (!target.value)
+    return ''
+  const weekday = t(`weekdays.${WEEKDAY_KEYS[target.value.day()]}`)
+  return t('nextLeave', { weekday, offTime: store.offWork.offTime })
+})
+
+/** 剩余不足一小时：进入冲刺态，用暖色强调；非提醒日与紧迫无关，不触发。 */
+const isUrgent = computed<boolean>(() => {
+  if (!target.value || !todayMatches.value)
     return false
   return secondsUntil(target.value, now.value) <= 3600
 })
@@ -86,6 +97,12 @@ const notifyTime = computed<string>(() => {
         {{ t('freed') }}
       </p>
       <p
+        v-else-if="!todayMatches"
+        class="led led-glow my-0 whitespace-nowrap text-[2.9rem] font-bold leading-none tracking-tighter"
+      >
+        {{ clock }}
+      </p>
+      <p
         v-else
         class="led my-0 whitespace-nowrap text-[2.9rem] font-bold leading-none tracking-tighter"
         :class="isUrgent
@@ -96,8 +113,11 @@ const notifyTime = computed<string>(() => {
       </p>
 
       <div class="flex shrink-0 flex-col items-end gap-1 text-right text-[12px] text-[var(--app-muted)]">
-        <span>{{ t('leave', { offTime: store.offWork.offTime }) }}</span>
-        <span v-if="!isOffNow && (store.remind.advanceMinutes ?? 0) > 0">{{ t('remind', { notifyTime }) }}</span>
+        <template v-if="todayMatches">
+          <span>{{ t('leave', { offTime: store.offWork.offTime }) }}</span>
+          <span v-if="!isOffNow && (store.remind.advanceMinutes ?? 0) > 0">{{ t('remind', { notifyTime }) }}</span>
+        </template>
+        <span v-else>{{ nextLeaveText }}</span>
       </div>
     </div>
 
@@ -112,10 +132,12 @@ zh-CN:
   freed: 下班！
   leave: "今天 {offTime} 下班"
   remind: "将在 {notifyTime} 提醒您"
+  nextLeave: "下次下班：周{weekday} {offTime}"
 en-US:
   freedomCountdown: Freedom Countdown
   setting: Setting
   freed: Off Duty!
   leave: "Leave at {offTime}"
   remind: "Remind at {notifyTime}"
+  nextLeave: "Next off: {weekday} {offTime}"
 </i18n>
