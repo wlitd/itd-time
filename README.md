@@ -4,11 +4,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Wails](https://img.shields.io/badge/Wails-v3--beta-DF0000?logo=go&logoColor=white)](https://v3.wails.io/)
-[![Go](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
-[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-v1.1.2-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-v1.2.0-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
 
 > I'm off duty! — a tiny desktop app for off-work countdown & to-do reminders
 >
@@ -18,7 +18,7 @@
 
 ## ⬇️ Download
 
-**[Download for Windows (v1.1.2, `.exe` installer)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
+**[Download for Windows (v1.2.0, `.exe` installer)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
 
 Requires Windows 10/11 x64. Installs per-user into `%LOCALAPPDATA%\Programs\ItdTime` — no admin rights needed. After that, newer versions are delivered by the built-in in-app self-update.
 
@@ -66,9 +66,9 @@ internal/
 
 | Area | Technology |
 | --- | --- |
-| Desktop framework | [Wails v3](https://v3.wails.io/) (beta.29) + [go-task](https://taskfile.dev/) orchestration |
-| Backend | Go 1.25 |
-| Frontend | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 5.9 |
+| Desktop framework | [Wails v3](https://v3.wails.io/) (beta.32) + [go-task](https://taskfile.dev/) orchestration |
+| Backend | Go 1.26 |
+| Frontend | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 6.0 |
 | UI library | [PrimeVue 4](https://primevue.org/) (custom theme preset, light & dark) |
 | Atomic CSS | [UnoCSS](https://unocss.dev/) (Lucide / Flag icon sets) |
 | State | Pinia 4 |
@@ -80,9 +80,9 @@ internal/
 
 ### Prerequisites
 
-- [Go](https://go.dev/) 1.25+
+- [Go](https://go.dev/) 1.26+
 - [Node.js](https://nodejs.org/) 20+ with [pnpm](https://pnpm.io/)
-- Wails v3 CLI: `go install github.com/wailsapp/wails/v3/cmd/wails3@latest` (this project targets `beta.29`)
+- Wails v3 CLI: `go install github.com/wailsapp/wails/v3/cmd/wails3@latest` (this project targets `beta.32`)
 - [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) on Windows (usually preinstalled on Win10/11)
 
 ### Development

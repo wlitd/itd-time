@@ -4,11 +4,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Wails](https://img.shields.io/badge/Wails-v3--beta-DF0000?logo=go&logoColor=white)](https://v3.wails.io/)
-[![Go](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
-[![Download for Windows](https://img.shields.io/badge/Windows_%E4%B8%8B%E8%BD%BD-v1.1.2-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
+[![Download for Windows](https://img.shields.io/badge/Windows_%E4%B8%8B%E8%BD%BD-v1.2.0-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
 
 > I'm off duty! —— 一个下班提醒 + 待办提醒的桌面小应用
 >
@@ -18,7 +18,7 @@
 
 ## ⬇️ 下载
 
-**[Windows 版下载（v1.1.2，`.exe` 安装器）](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
+**[Windows 版下载（v1.2.0，`.exe` 安装器）](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
 
 需 Windows 10/11 x64。按用户安装到 `%LOCALAPPDATA%\Programs\ItdTime`，免管理员权限；装好后新版本由应用内自更新送达。
 
@@ -63,9 +63,9 @@ internal/
 
 | 分类 | 技术 |
 | --- | --- |
-| 桌面框架 | [Wails v3](https://v3.wails.io/)（beta.29）+ [go-task](https://taskfile.dev/) 构建编排 |
-| 后端 | Go 1.25 |
-| 前端框架 | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 5.9 |
+| 桌面框架 | [Wails v3](https://v3.wails.io/)（beta.32）+ [go-task](https://taskfile.dev/) 构建编排 |
+| 后端 | Go 1.26 |
+| 前端框架 | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 6.0 |
 | UI 组件库 | [PrimeVue 4](https://primevue.org/)（自定义主题 preset，深浅双模式） |
 | 原子化 CSS | [UnoCSS](https://unocss.dev/)（Lucide / Flag 图标集） |
 | 状态管理 | Pinia 4 |
@@ -77,9 +77,9 @@ internal/
 
 ### 环境要求
 
-- [Go](https://go.dev/) 1.25+
+- [Go](https://go.dev/) 1.26+
 - [Node.js](https://nodejs.org/) 20+ 与 [pnpm](https://pnpm.io/)
-- Wails v3 CLI：`go install github.com/wailsapp/wails/v3/cmd/wails3@latest`（本项目对齐 `beta.29`）
+- Wails v3 CLI：`go install github.com/wailsapp/wails/v3/cmd/wails3@latest`（本项目对齐 `beta.32`）
 - Windows 需安装 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Win10/11 一般已内置）
 
 ### 开发

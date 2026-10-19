@@ -11,7 +11,7 @@ info:
   description: "下班倒计时与提醒工具" # The application description
   copyright: "(c) 2026, Wlitd" # Copyright text
   comments: "I'm off duty!" # Comments
-  version: "1.1.2" # The application version
+  version: "1.2.0" # The application version
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)
   #                               # Should match the name of your .icon file without the extension
   #                               # If not set and Assets.car exists, defaults to "appicon"
