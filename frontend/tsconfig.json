@@ -16,9 +16,9 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "noEmit": true,
-    "baseUrl": ".",
+    // TS 6 已废弃 baseUrl（7.0 移除）：paths 不带 baseUrl 时按 tsconfig 所在目录解析。
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["vite/client", "unocss"]
   },
