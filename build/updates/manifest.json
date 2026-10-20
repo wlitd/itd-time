@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "channel": "stable",
-  "name": "ItdTime 1.2.0",
-  "notes": "非提醒日（如周末）倒计时区不再显示跨天倒计时，改为实时时钟，并提示下次下班的时间；其余细节优化。",
-  "publishedAt": "2026-10-19T02:43:53Z",
+  "name": "ItdTime 1.2.1",
+  "notes": "应用描述文案统一为「ItdTime」。",
+  "publishedAt": "2026-10-20T01:15:47Z",
   "artifacts": [
     {
-      "url": "ItdTime-1.2.0-windows-amd64.exe",
+      "url": "ItdTime-1.2.1-windows-amd64.exe",
       "filename": "ItdTime.exe",
       "filetype": "exe",
       "size": 13300224,
       "platform": "windows",
       "arch": "amd64",
       "digestAlgo": "sha256",
-      "digest": "MUAZABMnrA/+VyYW9McGBkuTluCo7huugZCuJcZEH4A="
+      "digest": "4j84ROISEGdAJ3HblbDnkLTyFiUoaBgd0Z0Y/ANH2CE="
     }
   ]
 }

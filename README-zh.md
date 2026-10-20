@@ -8,7 +8,7 @@
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
-[![Download for Windows](https://img.shields.io/badge/Windows_%E4%B8%8B%E8%BD%BD-v1.2.0-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
+[![Download for Windows](https://img.shields.io/badge/Windows_%E4%B8%8B%E8%BD%BD-v1.2.1-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
 
 > I'm off duty! —— 一个下班提醒 + 待办提醒的桌面小应用
 >
@@ -18,7 +18,7 @@
 
 ## ⬇️ 下载
 
-**[Windows 版下载（v1.2.0，`.exe` 安装器）](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
+**[Windows 版下载（v1.2.1，`.exe` 安装器）](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
 
 需 Windows 10/11 x64。按用户安装到 `%LOCALAPPDATA%\Programs\ItdTime`，免管理员权限；装好后新版本由应用内自更新送达。
 
