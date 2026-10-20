@@ -8,10 +8,10 @@ info:
   companyName: "Wlitd" # The name of the company
   productName: "ItdTime" # The name of the application
   productIdentifier: "com.wlitd.itdtime" # The unique product identifier
-  description: "下班倒计时与提醒工具" # The application description
+  description: "ItdTime" # The application description
   copyright: "(c) 2026, Wlitd" # Copyright text
   comments: "I'm off duty!" # Comments
-  version: "1.2.0" # The application version
+  version: "1.2.1" # The application version
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)
   #                               # Should match the name of your .icon file without the extension
   #                               # If not set and Assets.car exists, defaults to "appicon"

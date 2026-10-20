@@ -1,12 +1,12 @@
 {
 	"fixed": {
-		"file_version": "1.2.0"
+		"file_version": "1.2.1"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "1.2.0",
+			"ProductVersion": "1.2.1",
 			"CompanyName": "Wlitd",
-			"FileDescription": "下班倒计时与提醒工具",
+			"FileDescription": "ItdTime",
 			"LegalCopyright": "© 2026, Wlitd",
 			"ProductName": "ItdTime",
 			"Comments": "I'm off duty!"
