@@ -8,7 +8,7 @@
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](#)
-[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-v1.2.1-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-v1.2.2-2EA043?logo=windows&logoColor=white)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)
 
 > I'm off duty! — a tiny desktop app for off-work countdown & to-do reminders
 >
@@ -18,7 +18,7 @@
 
 ## ⬇️ Download
 
-**[Download for Windows (v1.2.1, `.exe` installer)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
+**[Download for Windows (v1.2.2, `.exe` installer)](https://wlitd.com/updates/ItdTime-amd64-installer.exe)**
 
 Requires Windows 10/11 x64. Installs per-user into `%LOCALAPPDATA%\Programs\ItdTime` — no admin rights needed. After that, newer versions are delivered by the built-in in-app self-update.
 

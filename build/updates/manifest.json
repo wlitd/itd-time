@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "version": "1.2.1",
+  "version": "1.2.2",
   "channel": "stable",
-  "name": "ItdTime 1.2.1",
-  "notes": "应用描述文案统一为「ItdTime」。",
-  "publishedAt": "2026-10-20T01:15:47Z",
+  "name": "ItdTime 1.2.2",
+  "notes": "待办提醒改为按截止时间整点触发，不再受提前提醒影响；设置项更名为「下班提前提醒」。",
+  "publishedAt": "2026-10-22T02:15:24Z",
   "artifacts": [
     {
-      "url": "ItdTime-1.2.1-windows-amd64.exe",
+      "url": "ItdTime-1.2.2-windows-amd64.exe",
       "filename": "ItdTime.exe",
       "filetype": "exe",
       "size": 13300224,
       "platform": "windows",
       "arch": "amd64",
       "digestAlgo": "sha256",
-      "digest": "4j84ROISEGdAJ3HblbDnkLTyFiUoaBgd0Z0Y/ANH2CE="
+      "digest": "iN3K2i0BWoM8csl49UjTgO5Q+hgK4RRMICdlyDQSyGY="
     }
   ]
 }

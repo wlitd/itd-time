@@ -29,7 +29,7 @@ const autostartArg = "--autostart"
 // version 应用版本号，本变量即运行时唯一真值源（不发版流水线注入）。
 // 需为合法 semver（不带 v 前缀），updater 依此与 manifest 版本做新旧比较；
 // 发版时须与 build/config.yml、build/windows/info.json、build/windows/nsis/wails_tools.nsh 四处同步。
-var version = "1.2.1"
+var version = "1.2.2"
 
 func main() {
 	// 基础设施：加载持久化数据。
