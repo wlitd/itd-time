@@ -154,8 +154,8 @@ func TestTodoFires(t *testing.T) {
 	}
 }
 
-// 代办与下班共用全局提前量：提醒时刻应为 deadline - advance。
-func TestTodoFires_AdvanceBeforeDeadline(t *testing.T) {
+// 代办不受下班提前量影响：提醒时刻应为截止时间整点。
+func TestTodoFires_IgnoresAdvance(t *testing.T) {
 	now := at(2026, time.October, 14, 10, 0)
 	deadline := at(2026, time.October, 14, 11, 0) // 11:00 到期
 	data := AppData{
@@ -167,7 +167,7 @@ func TestTodoFires_AdvanceBeforeDeadline(t *testing.T) {
 	if len(fires) != 1 {
 		t.Fatalf("want 1 todo fire, got %d: %+v", len(fires), fires)
 	}
-	want := at(2026, time.October, 14, 10, 45) // 10:45 = 11:00 - 15min
+	want := at(2026, time.October, 14, 11, 0) // 按截止时间整点触发，不减提前量
 	if !fires[0].At.Equal(want) || fires[0].Kind != RemindKindTodo {
 		t.Errorf("got %+v, want todo@%v", fires[0], want)
 	}

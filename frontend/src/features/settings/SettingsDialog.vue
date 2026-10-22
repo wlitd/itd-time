@@ -161,7 +161,7 @@ async function preview(): Promise<void> {
 zh-CN:
   title: 设置
   offTime: 下班时间
-  advanceMinutes: 提前提醒
+  advanceMinutes: 下班提前提醒
   repeat: 重复
   label: 提醒样式
   squidward: 我下班了，蟹老板！
@@ -170,7 +170,7 @@ zh-CN:
 en-US:
   title: Settings
   offTime: Off Time
-  advanceMinutes: Advance Minutes
+  advanceMinutes: Off-Work Advance
   repeat: Repeat
   label: Remind Style
   squidward: "I'm off work, Mr. Krabs!"

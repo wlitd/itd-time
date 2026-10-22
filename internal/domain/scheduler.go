@@ -56,7 +56,7 @@ func NextFires(data AppData, now time.Time, horizon time.Duration) []Fire {
 	advance := data.Remind.AdvanceMinutes
 	var fires []Fire
 	fires = append(fires, offWorkFires(data.OffWork, advance, now, horizon)...)
-	fires = append(fires, todoFires(data.Todos, advance, now, horizon)...)
+	fires = append(fires, todoFires(data.Todos, now, horizon)...)
 	sort.Slice(fires, func(i, j int) bool {
 		if !fires[i].At.Equal(fires[j].At) {
 			return fires[i].At.Before(fires[j].At)
@@ -100,18 +100,17 @@ func offWorkFires(cfg OffWorkConfig, advance int, now time.Time, horizon time.Du
 	return out
 }
 
-// todoFires 计算未完成、未提醒过、且提醒时刻落在区间内的代办。
-// 与下班提醒共用全局提前量：代办在 (deadline - advance) 触发一次；
-// advance 为 0 时即到期那一刻。已提醒（Reminded）的代办不再重复弹出。
-func todoFires(todos []Todo, advance int, now time.Time, horizon time.Duration) []Fire {
+// todoFires 计算未完成、未提醒过、且到期时刻落在区间内的代办。
+// 代办截止时间是用户选定的绝对时刻，按点整触发，不受下班提前量影响；
+// 已提醒（Reminded）的代办不再重复弹出。
+func todoFires(todos []Todo, now time.Time, horizon time.Duration) []Fire {
 	end := now.Add(horizon)
-	advanceDur := time.Duration(advance) * time.Minute
 	var out []Fire
 	for _, t := range todos {
 		if t.Completed || t.Reminded {
 			continue
 		}
-		at := time.UnixMilli(t.Deadline).In(now.Location()).Add(-advanceDur)
+		at := time.UnixMilli(t.Deadline).In(now.Location())
 		if at.After(now) && !at.After(end) {
 			out = append(out, Fire{At: at, Kind: RemindKindTodo, TodoID: t.ID})
 		}

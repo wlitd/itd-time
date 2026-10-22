@@ -22,13 +22,13 @@ const (
 	RemindKindOffWork RemindKind = "offwork"
 	// RemindKindOffWorkAdvance 下班提前提醒。
 	RemindKindOffWorkAdvance RemindKind = "offworkAdvance"
-	// RemindKindTodo 代办提醒（在截止时间前 AdvanceMinutes 触发；为 0 时即到期时刻）。
+	// RemindKindTodo 代办提醒（在截止时间整点触发，不受下班提前量影响）。
 	RemindKindTodo RemindKind = "todo"
 )
 
-// RemindSettings 提醒的通用偏好，全局生效——同时作用于下班提醒与代办提醒。
-// 之所以独立于 OffWorkConfig：提前量与卡片样式并非「下班」专属，
-// 代办也复用同一份提前量，避免把全局规则耦合进某一类配置里。
+// RemindSettings 提醒的通用偏好，全局生效。
+// AdvanceMinutes 仅作用于下班提醒；代办提醒按截止时间整点触发。
+// 样式（Style）则同时作用于各类提醒卡片。
 type RemindSettings struct {
 	// AdvanceMinutes 提前提醒分钟数，0 表示不提前。
 	AdvanceMinutes int `json:"advanceMinutes"`
