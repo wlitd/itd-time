@@ -2,3 +2,8 @@ allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
   - '@wailsio/runtime@3.0.0-beta.32'
+  - '@intlify/core-base@11.4.17'
+  - '@intlify/devtools-types@11.4.17'
+  - '@intlify/message-compiler@11.4.17'
+  - '@intlify/shared@11.4.17'
+  - vue-i18n@11.4.17
