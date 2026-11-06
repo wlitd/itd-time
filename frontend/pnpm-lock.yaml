@@ -15,8 +15,8 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(vue@3.5.44(typescript@6.0.3))
       '@wailsio/runtime':
-        specifier: 3.0.0-beta.32
-        version: 3.0.0-beta.32
+        specifier: 3.1.0
+        version: 3.1.0
       dayjs:
         specifier: ^1.11.23
         version: 1.11.23
@@ -802,8 +802,8 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  '@wailsio/runtime@3.0.0-beta.32':
-    resolution: {integrity: sha512-lZgs1KgUSedSvPkGGEmjLwCkHwpEZKr3B9hr/ZL0sz5ipYM9kN8WpWPZOVLCFllrJhtmtNygR/h4VbmiELi4tQ==}
+  '@wailsio/runtime@3.1.0':
+    resolution: {integrity: sha512-noEAedvRyO8TLCrqhGwzrp+mbMxAIDa2rYmdJQOzvJV9MxgaZeXAJGNBiMiKMTSSy4ESOtQi4VH/5heSzi6ZmA==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2085,7 +2085,7 @@ snapshots:
     dependencies:
       vue: 3.5.44(typescript@6.0.3)
 
-  '@wailsio/runtime@3.0.0-beta.32': {}
+  '@wailsio/runtime@3.1.0': {}
 
   acorn-jsx@5.3.2(acorn@8.19.0):
     dependencies:

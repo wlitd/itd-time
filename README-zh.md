@@ -3,7 +3,7 @@
 [English](./README.md) | **简体中文**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Wails](https://img.shields.io/badge/Wails-v3--beta-DF0000?logo=go&logoColor=white)](https://v3.wails.io/)
+[![Wails](https://img.shields.io/badge/Wails-v3.1.0-DF0000?logo=go&logoColor=white)](https://v3.wails.io/)
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4-6366F1?logo=vue.js&logoColor=white)](https://primevue.org/)
@@ -63,7 +63,7 @@ internal/
 
 | 分类 | 技术 |
 | --- | --- |
-| 桌面框架 | [Wails v3](https://v3.wails.io/)（beta.32）+ [go-task](https://taskfile.dev/) 构建编排 |
+| 桌面框架 | [Wails v3](https://v3.wails.io/)（v3.1.0）+ [go-task](https://taskfile.dev/) 构建编排 |
 | 后端 | Go 1.26 |
 | 前端框架 | Vue 3.5 `<script setup>` + Vite 8 + TypeScript 6.0 |
 | UI 组件库 | [PrimeVue 4](https://primevue.org/)（自定义主题 preset，深浅双模式） |
@@ -79,7 +79,7 @@ internal/
 
 - [Go](https://go.dev/) 1.26+
 - [Node.js](https://nodejs.org/) 20+ 与 [pnpm](https://pnpm.io/)
-- Wails v3 CLI：`go install github.com/wailsapp/wails/v3/cmd/wails3@latest`（本项目对齐 `beta.32`）
+- Wails v3 CLI：`go install github.com/wailsapp/wails/v3/cmd/wails3@latest`（本项目对齐 `v3.1.0`）
 - Windows 需安装 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Win10/11 一般已内置）
 
 ### 开发
